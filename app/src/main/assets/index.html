@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<title>DRIVING LESSONS — Training Manager</title>
+<meta name="theme-color" content="#F5B700" />
+<meta name="description" content="Manage driving students, lessons, payments, balances, and WhatsApp progress updates." />
+<link rel="manifest" href="manifest.json" />
+<link rel="apple-touch-icon" href="icons/icon-192.png" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<meta name="apple-mobile-web-app-title" content="DriveLog" />
+<style>
+  @font-face { font-family: 'DL-Display'; src: local('Arial Narrow Bold'), local('Arial'); font-weight: 700; }
+  :root {
+    --asphalt: #22262B;
+    --road-yellow: #F5B700;
+    --paper: #EEF0F2;
+    --card: #FFFFFF;
+    --ink: #1B1E22;
+    --muted: #6B7280;
+    --go-green: #2F8F5B;
+    --stop-red: #D64545;
+    --line: #D9DCE1;
+  }
+  html, body { margin: 0; padding: 0; background: var(--paper); }
+  * { box-sizing: border-box; }
+  body, input, textarea, button { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, sans-serif; }
+  button { cursor: pointer; }
+  .display { font-family: "Arial Narrow", "Helvetica Neue Condensed", Arial, sans-serif; font-weight: 700; letter-spacing: 0.2px; }
+  #root { min-height: 100vh; }
+  .phone { width: 100%; max-width: 480px; margin: 0 auto; background: var(--paper); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+  .topbar { background: var(--asphalt); padding: 18px 14px; display: flex; align-items: center; gap: 8px; position: sticky; top: 0; z-index: 5; }
+  .topbar-title { flex: 1; text-align: center; color: var(--paper); font-size: 22px; }
+  .badge, .icon-btn { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: none; }
+  .badge { background: var(--road-yellow); }
+  .icon-btn { background: transparent; }
+  .body { flex: 1; overflow-y: auto; }
+  .list-wrap { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
+  .empty { padding: 28px 4px; }
+  .empty-title { font-size: 20px; color: var(--ink); margin-bottom: 6px; }
+  .empty-body { font-size: 14px; color: var(--muted); line-height: 1.5; }
+  .student-card { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-align: left; width: 100%; margin-bottom: 10px; }
+  .student-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--paper); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .student-name { font-size: 18px; color: var(--ink); }
+  .student-meta { font-size: 12.5px; color: var(--muted); margin: 2px 0 8px; }
+  .progress-track { position: relative; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
+  .progress-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--road-yellow); border-radius: 3px; transition: width 0.3s ease; }
+  .progress-dash { position: absolute; left: 0; right: 0; top: 50%; height: 1px; border-top: 1px dashed rgba(0,0,0,0.15); }
+  .fab { margin-top: 12px; margin-bottom: 24px; width: 100%; background: var(--road-yellow); border: none; border-radius: 12px; padding: 13px 16px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; color: var(--asphalt); }
+  .detail-header { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 4px; }
+  .detail-meta-row { font-size: 13px; color: var(--muted); display: flex; gap: 6px; margin-bottom: 10px; }
+  .hours-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
+  .hours-big { font-size: 34px; color: var(--ink); line-height: 1; }
+  .hours-small { font-size: 14px; color: var(--muted); }
+  .summary-btn { margin-top: 14px; width: 100%; background: rgba(47,143,91,0.08); border: 1px solid rgba(47,143,91,0.35); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 600; color: var(--go-green); }
+  .section-label { font-size: 16px; color: var(--ink); margin: 14px 2px 4px; }
+  .timeline-row { display: flex; gap: 10px; }
+  .timeline-marker-col { display: flex; flex-direction: column; align-items: center; width: 16px; padding-top: 18px; }
+  .timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--road-yellow); border: 2px solid var(--asphalt); flex-shrink: 0; }
+  .timeline-line { flex: 1; width: 0; border-left: 2px dashed var(--line); margin-top: 2px; }
+  .lesson-card { flex: 1; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px; margin-bottom: 14px; }
+  .lesson-top-row { display: flex; justify-content: space-between; font-size: 12.5px; color: var(--muted); margin-bottom: 8px; gap: 6px; }
+  .lesson-date, .lesson-duration { display: flex; align-items: center; gap: 5px; }
+  .skill-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; }
+  .chip { font-size: 11.5px; background: var(--paper); border: 1px solid var(--line); border-radius: 20px; padding: 3px 9px; color: var(--ink); }
+  .lesson-notes { font-size: 13.5px; color: var(--ink); line-height: 1.45; margin-bottom: 8px; white-space: pre-wrap; }
+  .lesson-bottom-row { display: flex; justify-content: space-between; align-items: center; }
+  .rating-pill { font-size: 12.5px; font-weight: 600; }
+  .share-link { display: flex; align-items: center; gap: 5px; background: none; border: none; color: var(--go-green); font-size: 12.5px; font-weight: 600; padding: 0; }
+  .form-wrap { padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+  .form-subhead { font-size: 13px; color: var(--muted); margin-bottom: -6px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field-label { font-size: 13px; font-weight: 600; color: var(--ink); }
+  .input, .textarea { border: 1px solid var(--line); border-radius: 9px; padding: 10px 12px; font-size: 14.5px; color: var(--ink); background: var(--card); width: 100%; }
+  .textarea { resize: vertical; }
+  .pill-row { display: flex; flex-wrap: wrap; gap: 7px; }
+  .select-pill { border: 1px solid var(--line); background: var(--card); border-radius: 20px; padding: 7px 12px; font-size: 12.5px; color: var(--ink); display: flex; align-items: center; }
+  .select-pill.active { border-color: var(--asphalt); background: var(--asphalt); color: var(--paper); }
+  .form-actions { display: flex; gap: 10px; margin-top: 6px; }
+  .secondary-btn, .primary-btn { flex: 1; border: none; border-radius: 10px; padding: 12px 0; font-size: 14.5px; font-weight: 600; }
+  .secondary-btn { background: var(--card); border: 1px solid var(--line); color: var(--ink); }
+  .primary-btn { background: var(--road-yellow); font-weight: 700; color: var(--asphalt); }
+  .primary-btn:disabled { opacity: 0.5; }
+  .toast { position: fixed; bottom: 12px; left: 12px; right: 12px; max-width: 456px; margin: 0 auto; background: var(--stop-red); color: white; padding: 10px 14px; border-radius: 10px; font-size: 13px; }
+
+  .dashboard { padding: 14px 16px 0; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; }
+  .stat-label { font-size:11.5px; color:var(--muted); }
+  .stat-value { font-size:22px; color:var(--ink); margin-top:4px; }
+  .green { color:var(--go-green)!important; }
+  .red { color:var(--stop-red)!important; }
+  .payment-card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  .payment-top { display:flex; justify-content:space-between; gap:8px; }
+  .payment-amount { font-size:18px; font-weight:700; }
+  .payment-meta { font-size:12.5px; color:var(--muted); margin-top:5px; }
+  .quick-row { display:flex; gap:8px; padding:12px 16px 0; }
+  .quick-btn { flex:1; border:1px solid var(--line); background:var(--card); border-radius:10px; padding:10px 6px; font-weight:600; color:var(--ink); }
+  .danger-btn { border:1px solid rgba(214,69,69,.35); color:var(--stop-red); background:var(--card); border-radius:10px; padding:10px 12px; font-weight:600; }
+  .select { border:1px solid var(--line); border-radius:9px; padding:10px 12px; font-size:14.5px; color:var(--ink); background:var(--card); width:100%; }
+  @media(max-width:360px){.dashboard{grid-template-columns:1fr}.quick-row{flex-direction:column}}
+
+  .report-wrap { padding:14px 16px 24px; }
+  .report-month { margin-bottom:12px; }
+  .report-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px; }
+  .report-table { width:100%; border-collapse:collapse; background:var(--card); border:1px solid var(--line); border-radius:12px; overflow:hidden; font-size:12.5px; }
+  .report-table th,.report-table td { padding:9px 8px; border-bottom:1px solid var(--line); text-align:left; }
+  .report-table th { color:var(--muted); font-weight:600; background:var(--paper); }
+  .report-table tr:last-child td { border-bottom:none; }
+  .expense-card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:11px 12px; margin-bottom:8px; display:flex; justify-content:space-between; gap:10px; }
+  .expense-title { font-weight:650; color:var(--ink); }
+  .expense-meta { font-size:12px; color:var(--muted); margin-top:3px; }
+  .report-actions { display:flex; gap:8px; margin:10px 0 4px; }
+  .report-actions button { flex:1; }
+  svg { display: block; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+"use strict";
+
+/* ============ tiny inline icon set (no external deps) ============ */
+function svg(inner, size, color, stroke) {
+  return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="' +
+    (color || 'currentColor') + '" stroke-width="' + (stroke || 2) +
+    '" stroke-linecap="round" stroke-linejoin="round">' + inner + '</svg>';
+}
+const ICONS = {
+  plus: (s, c) => svg('<line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>', s, c),
+  back: (s, c) => svg('<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/>', s, c),
+  chat: (s, c) => svg('<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>', s, c),
+  clock: (s, c) => svg('<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>', s, c),
+  cal: (s, c) => svg('<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>', s, c),
+  chev: (s, c) => svg('<polyline points="9 18 15 12 9 6"/>', s, c),
+  check: (s, c) => svg('<polyline points="20 6 9 17 4 12"/>', s, c),
+  gauge: (s, c) => svg('<path d="M12 15l3.5-3.5"/><path d="M20.6 15A9 9 0 1 0 3.4 15"/>', s, c),
+  car: (s, c) => svg('<path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM3 17V11l2-5h14l2 5v6"/>', s, c),
+  bike: (s, c) => svg('<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 100-2 1 1 0 000 2zM12 17.5V14l-3-3 4-3 2 3h2"/>', s, c),
+  truck: (s, c) => svg('<rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>', s, c),
+};
+
+const LICENSE_TYPES = [
+  { id: "two-wheeler", label: "Two-Wheeler", icon: "bike" },
+  { id: "car-manual", label: "Car — Manual", icon: "car" },
+  { id: "car-auto", label: "Car — Automatic", icon: "car" },
+  { id: "commercial", label: "Commercial / Heavy", icon: "truck" },
+];
+
+const SKILL_OPTIONS = [
+  "Clutch control", "Steering", "Braking", "Parking",
+  "Reverse driving", "Lane changing", "Highway driving",
+  "Night driving", "Traffic navigation", "Parallel parking",
+  "Mock test",
+];
+
+const RATINGS = [
+  { id: "needs-practice", label: "Needs practice", color: "var(--stop-red)" },
+  { id: "satisfactory", label: "Satisfactory", color: "#B8860B" },
+  { id: "good", label: "Good", color: "var(--go-green)" },
+  { id: "excellent", label: "Excellent", color: "#1F6E48" },
+];
+
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+function todayISO() { return new Date().toISOString().slice(0, 10); }
+function formatDate(iso) {
+  const d = new Date(iso + "T00:00:00");
+  return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
+}
+function digitsOnly(s) { return (s || "").replace(/[^\d]/g, ""); }
+function escapeHtml(s) {
+  return (s == null ? "" : String(s)).replace(/[&<>"']/g, (m) => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[m]));
+}
+function licenseInfo(id) { return LICENSE_TYPES.find((l) => l.id === id) || LICENSE_TYPES[1]; }
+function ratingInfo(id) { return RATINGS.find((r) => r.id === id) || RATINGS[2]; }
+
+function storageGet(key, fallback) {
+  try {
+    const raw = localStorage.getItem(key);
+    return raw ? JSON.parse(raw) : fallback;
+  } catch (e) { return fallback; }
+}
+function storageSet(key, value) {
+  try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+  catch (e) { return false; }
+}
+
+/* ============ app state ============ */
+const state = {
+  students: storageGet("students", []),
+  lessonsByStudent: {},
+  view: { name: "list" },
+  error: "",
+  draft: {}, // scratch values for the currently open form
+};
+state.students.forEach((s) => { state.lessonsByStudent[s.id] = storageGet("lessons:" + s.id, []); });
+
+function activeStudent() {
+  return state.students.find((s) => s.id === state.view.studentId) || null;
+}
+function hoursCompleted(studentId) {
+  const entries = state.lessonsByStudent[studentId] || [];
+  return entries.reduce((sum, l) => sum + (Number(l.durationMinutes) || 0), 0) / 60;
+}
+function showError(msg) { state.error = msg; render(); setTimeout(() => { state.error = ""; render(); }, 3500); }
+
+function goto(view) { state.view = view; state.draft = {}; render(); }
+
+function addStudent(student) {
+  state.students.push(student);
+  state.lessonsByStudent[student.id] = [];
+  if (!storageSet("students", state.students)) showError("Couldn't save the student. Try again.");
+  goto({ name: "detail", studentId: student.id });
+}
+function addLesson(studentId, lesson) {
+  const list = state.lessonsByStudent[studentId] || [];
+  list.unshift(lesson);
+  state.lessonsByStudent[studentId] = list;
+  if (!storageSet("lessons:" + studentId, list)) showError("Couldn't save the lesson. Try again.");
+  goto({ name: "detail", studentId });
+}
+
+function openWhatsApp(phone, text) {
+  const p = digitsOnly(phone);
+  window.open("https://wa.me/" + p + "?text=" + encodeURIComponent(text), "_blank");
+}
+function lessonMessage(student, lesson) {
+  const lines = [
+    "Hi " + student.name + ", here's your driving lesson update for " + formatDate(lesson.date) + ":",
+    "",
+    "Duration: " + lesson.durationMinutes + " min",
+  ];
+  if (lesson.skills && lesson.skills.length) lines.push("Skills practiced: " + lesson.skills.join(", "));
+  lines.push("Rating: " + ratingInfo(lesson.rating).label);
+  if (lesson.notes) lines.push("Notes: " + lesson.notes);
+  lines.push("", "Total so far: " + hoursCompleted(student.id).toFixed(1) + " / " + student.totalHoursPlanned + " hrs", "Keep practicing!");
+  return lines.join("\n");
+}
+function summaryMessage(student) {
+  const entries = state.lessonsByStudent[student.id] || [];
+  const done = hoursCompleted(student.id);
+  const lastDate = entries[0] ? formatDate(entries[0].date) : "—";
+  return [
+    "Hi " + student.name + ", your driving training progress so far:",
+    "",
+    "Lessons completed: " + entries.length,
+    "Hours logged: " + done.toFixed(1) + " / " + student.totalHoursPlanned + " hrs",
+    "Last lesson: " + lastDate,
+    "Course fee: " + money(totalCourseFee(student)),
+    "Received: " + money(paymentsTotal(student.id)),
+    "Balance: " + money(balanceFor(student)),
+    "",
+    "Keep up the good work!",
+  ].join("\n");
+}
+
+
+/* ============ payments + dashboard extension ============ */
+state.paymentsByStudent = {};
+state.students.forEach((s) => { state.paymentsByStudent[s.id] = storageGet("payments:" + s.id, []); });
+state.expenses = storageGet("expenses", []);
+state.reportMonth = todayISO().slice(0,7);
+
+function paymentsTotal(studentId) {
+  return (state.paymentsByStudent[studentId] || []).reduce((sum,p) => sum + (Number(p.amount)||0), 0);
+}
+function totalCourseFee(s) { return Number(s.courseFee) || 0; }
+function balanceFor(s) { return Math.max(0, totalCourseFee(s) - paymentsTotal(s.id)); }
+function money(n) { return "₹" + Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:2}); }
+function addPayment(studentId, payment) {
+  const list = state.paymentsByStudent[studentId] || [];
+  list.unshift(payment);
+  state.paymentsByStudent[studentId] = list;
+  if (!storageSet("payments:" + studentId, list)) showError("Couldn't save the payment. Try again.");
+  goto({name:"detail", studentId});
+}
+function paymentsCount() {
+  return state.students.reduce((n,s)=>n+(state.paymentsByStudent[s.id]||[]).length,0);
+}
+function collectedTotal() {
+  return state.students.reduce((n,s)=>n+paymentsTotal(s.id),0);
+}
+function outstandingTotal() {
+  return state.students.reduce((n,s)=>n+balanceFor(s),0);
+}
+function dashboardHtml() {
+  const hours = state.students.reduce((n,s)=>n+hoursCompleted(s.id),0);
+  return '<div class="dashboard">' +
+    '<div class="stat"><div class="stat-label">STUDENTS</div><div class="stat-value">'+state.students.length+'</div></div>' +
+    '<div class="stat"><div class="stat-label">LESSONS</div><div class="stat-value">'+state.students.reduce((n,s)=>n+(state.lessonsByStudent[s.id]||[]).length,0)+'</div></div>' +
+    '<div class="stat"><div class="stat-label">RECEIVED</div><div class="stat-value green">'+money(collectedTotal())+'</div></div>' +
+    '<div class="stat"><div class="stat-label">PENDING</div><div class="stat-value red">'+money(outstandingTotal())+'</div></div>' +
+    '</div>';
+}
+function paymentListHtml(s) {
+  const list = state.paymentsByStudent[s.id] || [];
+  if (!list.length) return '<div class="empty"><div class="empty-body">No payments recorded yet.</div></div>';
+  return list.map(p =>
+    '<div class="payment-card"><div class="payment-top"><div><div class="payment-amount green">'+money(p.amount)+'</div><div class="payment-meta">'+formatDate(p.date)+' · '+escapeHtml(p.method||"Other")+'</div></div>' +
+    (p.note ? '<div class="payment-meta">'+escapeHtml(p.note)+'</div>' : '') + '</div></div>'
+  ).join("");
+}
+function paymentFormHtml(s) {
+  const d=state.draft;
+  if(d.amount===undefined)d.amount="";
+  if(d.date===undefined)d.date=todayISO();
+  if(d.method===undefined)d.method="Cash";
+  if(d.note===undefined)d.note="";
+  return '<div class="form-subhead">For '+escapeHtml(s.name)+'</div>'+
+    fieldHtml("Amount received (₹)",'<input class="input" id="p-amount" type="number" min="1" step="1" value="'+escapeHtml(d.amount)+'" placeholder="e.g. 3000" />')+
+    fieldHtml("Payment date",'<input class="input" id="p-date" type="date" value="'+d.date+'" />')+
+    fieldHtml("Payment method",'<div class="pill-row">'+["Cash","UPI","Bank transfer","Card","Other"].map(m=>'<button type="button" class="select-pill'+(d.method===m?' active':'')+'" data-pay-method="'+m+'">'+m+'</button>').join("")+'</div>')+
+    fieldHtml("Notes (optional)",'<input class="input" id="p-note" value="'+escapeHtml(d.note)+'" placeholder="e.g. 2nd installment" />')+
+    '<div class="form-actions"><button class="secondary-btn" id="btn-cancel-payment">Cancel</button><button class="primary-btn" id="btn-save-payment">Save payment</button></div>';
+}
+function addExpense(expense) {
+  state.expenses.unshift(expense);
+  if (!storageSet("expenses", state.expenses)) showError("Couldn't save the expense. Try again.");
+  goto({name:"reports"});
+}
+function monthLabel(key) { const d=new Date(key+"-01T00:00:00"); return d.toLocaleDateString(undefined,{month:"long",year:"numeric"}); }
+function monthPayments(key) {
+  const rows=[]; state.students.forEach(s=>(state.paymentsByStudent[s.id]||[]).forEach(p=>{if((p.date||"").slice(0,7)===key) rows.push({...p,studentName:s.name});}));
+  return rows.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+}
+function monthExpenses(key) { return state.expenses.filter(e=>(e.date||"").slice(0,7)===key).sort((a,b)=>String(b.date).localeCompare(String(a.date))); }
+function monthlyReceived(key) { return monthPayments(key).reduce((n,p)=>n+(Number(p.amount)||0),0); }
+function monthlyExpenses(key) { return monthExpenses(key).reduce((n,e)=>n+(Number(e.amount)||0),0); }
+function reportHtml() {
+  const key=state.reportMonth||todayISO().slice(0,7), pays=monthPayments(key), exps=monthExpenses(key), received=monthlyReceived(key), spent=monthlyExpenses(key);
+  const net=received-spent, lessons=state.students.reduce((n,s)=>n+(state.lessonsByStudent[s.id]||[]).filter(l=>(l.date||"").slice(0,7)===key).length,0);
+  const hours=state.students.reduce((n,s)=>n+(state.lessonsByStudent[s.id]||[]).filter(l=>(l.date||"").slice(0,7)===key).reduce((x,l)=>x+(Number(l.durationMinutes)||0),0)/60,0);
+  return '<div class="report-wrap">'+
+    '<div class="report-month">'+fieldHtml("Report month",'<input class="input" id="report-month" type="month" value="'+key+'" />')+'</div>'+
+    '<div class="report-grid">'+
+      '<div class="stat"><div class="stat-label">RECEIVED</div><div class="stat-value green">'+money(received)+'</div></div>'+
+      '<div class="stat"><div class="stat-label">EXPENSES</div><div class="stat-value red">'+money(spent)+'</div></div>'+
+      '<div class="stat"><div class="stat-label">NET</div><div class="stat-value '+(net>=0?'green':'red')+'">'+money(net)+'</div></div>'+
+      '<div class="stat"><div class="stat-label">LESSONS / HOURS</div><div class="stat-value">'+lessons+' / '+hours.toFixed(1)+'</div></div>'+
+    '</div>'+
+    '<div class="section-label display">Payments received — '+monthLabel(key)+'</div>'+
+    (pays.length ? '<table class="report-table"><tr><th>Date</th><th>Student</th><th>Method</th><th>Amount</th></tr>'+pays.map(p=>'<tr><td>'+formatDate(p.date)+'</td><td>'+escapeHtml(p.studentName)+'</td><td>'+escapeHtml(p.method||'Other')+'</td><td class="green"><b>'+money(p.amount)+'</b></td></tr>').join('')+'</table>' : '<div class="empty"><div class="empty-body">No payments this month.</div></div>')+
+    '<div class="report-actions"><button class="quick-btn" id="btn-add-expense">＋ Add expense</button></div>'+
+    '<div class="section-label display">Expenses — '+monthLabel(key)+'</div>'+
+    (exps.length ? exps.map(e=>'<div class="expense-card"><div><div class="expense-title">'+escapeHtml(e.category||'Expense')+'</div><div class="expense-meta">'+formatDate(e.date)+(e.note?' · '+escapeHtml(e.note):'')+'</div></div><div class="red"><b>'+money(e.amount)+'</b></div></div>').join('') : '<div class="empty"><div class="empty-body">No expenses recorded this month.</div></div>')+
+    '<div class="section-label display">Overall outstanding</div><div class="stat"><div class="stat-label">TOTAL PENDING FROM STUDENTS</div><div class="stat-value red">'+money(outstandingTotal())+'</div></div>'+
+    '</div>';
+}
+function expenseFormHtml() {
+  const d=state.draft;if(d.amount===undefined)d.amount="";if(d.date===undefined)d.date=todayISO();if(d.category===undefined)d.category="Fuel";if(d.note===undefined)d.note="";
+  return fieldHtml("Amount (₹)",'<input class="input" id="e-amount" type="number" min="1" value="'+escapeHtml(d.amount)+'" placeholder="e.g. 500" />')+
+    fieldHtml("Expense date",'<input class="input" id="e-date" type="date" value="'+d.date+'" />')+
+    fieldHtml("Category",'<div class="pill-row">'+["Fuel","Vehicle maintenance","Advertising","Office","Other"].map(m=>'<button type="button" class="select-pill'+(d.category===m?' active':'')+'" data-exp-category="'+m+'">'+m+'</button>').join('')+'</div>')+
+    fieldHtml("Notes",'<input class="input" id="e-note" value="'+escapeHtml(d.note)+'" placeholder="Optional" />')+
+    '<div class="form-actions"><button class="secondary-btn" id="btn-cancel-expense">Cancel</button><button class="primary-btn" id="btn-save-expense">Save expense</button></div>';
+}
+function exportData() {
+  const data={version:3,exportedAt:new Date().toISOString(),students:state.students,lessons:{},payments:{},expenses:state.expenses};
+  state.students.forEach(s=>{data.lessons[s.id]=state.lessonsByStudent[s.id]||[];data.payments[s.id]=state.paymentsByStudent[s.id]||[];});
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="drivelog-backup-"+todayISO()+".json"; a.click(); URL.revokeObjectURL(a.href);
+}
+function importData() {
+  const input=document.createElement("input"); input.type="file"; input.accept=".json,application/json";
+  input.onchange=async()=>{const f=input.files&&input.files[0]; if(!f)return; try{
+    const data=JSON.parse(await f.text()); if(!Array.isArray(data.students)) throw new Error("Invalid backup");
+    state.students=data.students; state.lessonsByStudent={}; state.paymentsByStudent={};
+    state.students.forEach(s=>{state.lessonsByStudent[s.id]=data.lessons?.[s.id]||[];state.paymentsByStudent[s.id]=data.payments?.[s.id]||[];storageSet("lessons:"+s.id,state.lessonsByStudent[s.id]);storageSet("payments:"+s.id,state.paymentsByStudent[s.id]);}); state.expenses=Array.isArray(data.expenses)?data.expenses:[]; storageSet("expenses",state.expenses);
+    storageSet("students",state.students); goto({name:"list"});
+  }catch(e){showError("Invalid backup file.");}};
+  input.click();
+}
+
+/* ============ render ============ */
+function progressBarHtml(done, total) {
+  const pct = Math.max(0, Math.min(100, (done / Math.max(total, 0.01)) * 100));
+  return '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div><div class="progress-dash"></div></div>';
+}
+
+function topBarHtml() {
+  const v = state.view;
+  const s = activeStudent();
+  const title = v.name === "list" ? "DriveLog"
+    : v.name === "addStudent" ? "New student"
+    : v.name === "addLesson" ? "Log lesson"
+    : v.name === "addPayment" ? "Add payment"
+    : v.name === "reports" ? "Monthly report"
+    : v.name === "addExpense" ? "Add expense"
+    : s ? escapeHtml(s.name) : "DRIVING LESSONS";
+  const left = v.name === "list"
+    ? '<div class="badge">' + ICONS.gauge(16, "var(--asphalt)") + '</div>'
+    : '<button class="icon-btn" id="btn-back" aria-label="Back">' + ICONS.back(20, "var(--paper)") + '</button>';
+  return '<div class="topbar">' + left + '<div class="topbar-title display">' + title + '</div><div style="width:32px"></div></div>';
+}
+
+function studentListHtml() {
+  if (state.students.length === 0) {
+    return '<div class="empty"><div class="empty-title display">No students yet</div>' +
+      '<div class="empty-body">Add your first student to start logging lessons and sending progress updates.</div></div>' +
+      '<button class="fab" id="btn-add-student">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">New student</span></button>';
+  }
+  const cards = state.students.map((s) => {
+    const done = hoursCompleted(s.id);
+    const count = (state.lessonsByStudent[s.id] || []).length;
+    const li = licenseInfo(s.licenseType);
+    return '<button class="student-card" data-open="' + s.id + '">' +
+      '<div class="student-icon">' + ICONS[li.icon](18, "var(--asphalt)") + '</div>' +
+      '<div style="flex:1;text-align:left">' +
+        '<div class="student-name display">' + escapeHtml(s.name) + '</div>' +
+        '<div class="student-meta">' + count + ' lesson' + (count === 1 ? '' : 's') + ' · ' + done.toFixed(1) + '/' + s.totalHoursPlanned + ' hrs</div>' +
+        progressBarHtml(done, s.totalHoursPlanned) +
+      '</div>' +
+      ICONS.chev(18, "var(--muted)") +
+    '</button>';
+  }).join("");
+  return cards + '<button class="fab" id="btn-add-student">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">New student</span></button>';
+}
+
+function studentDetailHtml(s) {
+  const lessons = state.lessonsByStudent[s.id] || [];
+  const done = hoursCompleted(s.id);
+  const li = licenseInfo(s.licenseType);
+  let timelineHtml;
+  if (lessons.length === 0) {
+    timelineHtml = '<div class="empty"><div class="empty-title display">No lessons logged yet</div>' +
+      '<div class="empty-body">Log today\'s session to start the timeline.</div></div>';
+  } else {
+    timelineHtml = lessons.map((l, i) => {
+      const chips = (l.skills || []).map((sk) => '<span class="chip">' + escapeHtml(sk) + '</span>').join("");
+      const r = ratingInfo(l.rating);
+      return '<div class="timeline-row">' +
+        '<div class="timeline-marker-col"><div class="timeline-dot"></div>' + (i < lessons.length - 1 ? '<div class="timeline-line"></div>' : '') + '</div>' +
+        '<div class="lesson-card">' +
+          '<div class="lesson-top-row">' +
+            '<div class="lesson-date">' + ICONS.cal(14) + ' ' + formatDate(l.date) + '</div>' +
+            '<div class="lesson-duration">' + ICONS.clock(14) + ' ' + l.durationMinutes + ' min</div>' +
+          '</div>' +
+          (chips ? '<div class="skill-chips">' + chips + '</div>' : '') +
+          (l.notes ? '<div class="lesson-notes">' + escapeHtml(l.notes) + '</div>' : '') +
+          '<div class="lesson-bottom-row">' +
+            '<span class="rating-pill" style="color:' + r.color + '">' + r.label + '</span>' +
+            '<button class="share-link" data-share-lesson="' + l.id + '">' + ICONS.chat(14) + ' Share</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+    timelineHtml = '<div class="timeline">' + timelineHtml + '</div>';
+  }
+  return (
+    '<div class="detail-header">' +
+      '<div class="detail-meta-row"><span>' + li.label + '</span><span>· Started ' + formatDate(s.startDate) + '</span></div>' +
+      '<div class="hours-row"><span class="hours-big display">' + done.toFixed(1) + '</span><span class="hours-small">/ ' + s.totalHoursPlanned + ' hrs</span></div>' +
+      progressBarHtml(done, s.totalHoursPlanned) +
+      '<button class="summary-btn" id="btn-share-summary">' + ICONS.chat(16, "var(--go-green)") + '<span style="margin-left:8px">Send progress summary on WhatsApp</span></button>' +
+    '</div>' +
+    '<div class="section-label display">Lesson history</div>' +
+    timelineHtml +
+    '<button class="fab" id="btn-add-lesson">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">Log today\'s lesson</span></button>'
+  );
+}
+
+function fieldHtml(label, inner) {
+  return '<label class="field"><span class="field-label">' + label + '</span>' + inner + '</label>';
+}
+
+function addStudentFormHtml() {
+  const d = state.draft;
+  if (d.name === undefined) d.name = "";
+  if (d.phone === undefined) d.phone = "+91";
+  if (d.licenseType === undefined) d.licenseType = LICENSE_TYPES[1].id;
+  if (d.totalHoursPlanned === undefined) d.totalHoursPlanned = 20;
+  if (d.courseFee === undefined) d.courseFee = 0;
+  if (d.startDate === undefined) d.startDate = todayISO();
+
+  const licensePills = LICENSE_TYPES.map((lt) =>
+    '<button type="button" class="select-pill' + (d.licenseType === lt.id ? ' active' : '') + '" data-set-license="' + lt.id + '">' + lt.label + '</button>'
+  ).join("");
+
+  const canSave = d.name.trim().length > 0 && digitsOnly(d.phone).length >= 8;
+
+  return (
+    fieldHtml("Student name", '<input class="input" id="f-name" value="' + escapeHtml(d.name) + '" placeholder="e.g. Priya Sharma" />') +
+    fieldHtml("WhatsApp number (with country code)", '<input class="input" id="f-phone" value="' + escapeHtml(d.phone) + '" placeholder="+91 98765 43210" />') +
+    fieldHtml("License type", '<div class="pill-row">' + licensePills + '</div>') +
+    fieldHtml("Planned course hours", '<input class="input" id="f-hours" type="number" min="1" value="' + d.totalHoursPlanned + '" />') +
+    fieldHtml("Total course fee (₹)", '<input class="input" id="f-fee" type="number" min="0" value="' + (d.courseFee || 0) + '" />') +
+    fieldHtml("Start date", '<input class="input" id="f-start" type="date" value="' + d.startDate + '" />') +
+    '<div class="form-actions">' +
+      '<button class="secondary-btn" id="btn-cancel-student">Cancel</button>' +
+      '<button class="primary-btn" id="btn-save-student" ' + (canSave ? "" : "disabled") + '>Save student</button>' +
+    '</div>'
+  );
+}
+
+function addLessonFormHtml(s) {
+  const d = state.draft;
+  if (d.date === undefined) d.date = todayISO();
+  if (d.durationMinutes === undefined) d.durationMinutes = 60;
+  if (d.skills === undefined) d.skills = [];
+  if (d.notes === undefined) d.notes = "";
+  if (d.rating === undefined) d.rating = "good";
+
+  const skillPills = SKILL_OPTIONS.map((sk) => {
+    const on = d.skills.indexOf(sk) !== -1;
+    return '<button type="button" class="select-pill' + (on ? ' active' : '') + '" data-toggle-skill="' + escapeHtml(sk) + '">' +
+      (on ? ICONS.check(12) : '') + sk + '</button>';
+  }).join("");
+
+  const ratingPills = RATINGS.map((r) =>
+    '<button type="button" class="select-pill' + (d.rating === r.id ? ' active' : '') + '" data-set-rating="' + r.id + '"' +
+    (d.rating === r.id ? ' style="border-color:' + r.color + ';color:' + r.color + '"' : '') + '>' + r.label + '</button>'
+  ).join("");
+
+  return (
+    '<div class="form-subhead">For ' + escapeHtml(s.name) + '</div>' +
+    fieldHtml("Date", '<input class="input" id="f-date" type="date" value="' + d.date + '" />') +
+    fieldHtml("Duration (minutes)", '<input class="input" id="f-duration" type="number" min="1" value="' + d.durationMinutes + '" />') +
+    fieldHtml("Skills practiced", '<div class="pill-row">' + skillPills + '</div>') +
+    fieldHtml("Notes", '<textarea class="textarea" id="f-notes" rows="3" placeholder="How did today\'s session go?">' + escapeHtml(d.notes) + '</textarea>') +
+    fieldHtml("Rating", '<div class="pill-row">' + ratingPills + '</div>') +
+    '<div class="form-actions">' +
+      '<button class="secondary-btn" id="btn-cancel-lesson">Cancel</button>' +
+      '<button class="primary-btn" id="btn-save-lesson">Save lesson</button>' +
+    '</div>'
+  );
+}
+
+function render() {
+  const root = document.getElementById("root");
+  const v = state.view;
+  let bodyHtml = "";
+  let wrapClass = "list-wrap";
+
+  if (v.name === "list") {
+    bodyHtml = dashboardHtml() +
+      '<div class="quick-row"><button class="quick-btn" id="btn-reports">📊 Reports</button><button class="quick-btn" id="btn-export">⬇ Backup</button><button class="quick-btn" id="btn-import">⬆ Restore</button></div>' +
+      studentListHtml();
+  } else if (v.name === "addStudent") {
+    wrapClass = "form-wrap";
+    bodyHtml = addStudentFormHtml();
+  } else if (v.name === "detail") {
+    const s = activeStudent();
+    bodyHtml = s ? studentDetailHtml(s) : "";
+  } else if (v.name === "addLesson") {
+    const s = activeStudent();
+    wrapClass = "form-wrap";
+    bodyHtml = s ? addLessonFormHtml(s) : "";
+  } else if (v.name === "addPayment") {
+    const s = activeStudent();
+    wrapClass = "form-wrap";
+    bodyHtml = s ? paymentFormHtml(s) : "";
+  } else if (v.name === "reports") {
+    bodyHtml = reportHtml();
+  } else if (v.name === "addExpense") {
+    wrapClass = "form-wrap";
+    bodyHtml = expenseFormHtml();
+  }
+
+  root.innerHTML =
+    '<div class="phone">' +
+      topBarHtml() +
+      '<div class="body"><div class="' + wrapClass + '">' + bodyHtml + '</div></div>' +
+      (state.error ? '<div class="toast" id="toast">' + escapeHtml(state.error) + '</div>' : '') +
+    '</div>';
+
+  bindEvents();
+}
+
+function bindEvents() {
+  const root = document.getElementById("root");
+
+  const back = root.querySelector("#btn-back");
+  if (back) back.onclick = () => goto({ name: "list" });
+
+  const addStudentBtn = root.querySelector("#btn-add-student");
+  if (addStudentBtn) addStudentBtn.onclick = () => goto({ name: "addStudent" });
+
+  root.querySelectorAll("[data-open]").forEach((el) => {
+    el.onclick = () => goto({ name: "detail", studentId: el.getAttribute("data-open") });
+  });
+
+
+  const exportBtn = root.querySelector("#btn-export");
+  if (exportBtn) exportBtn.onclick = exportData;
+  const importBtn = root.querySelector("#btn-import");
+  if (importBtn) importBtn.onclick = importData;
+  const reportsBtn = root.querySelector("#btn-reports");
+  if (reportsBtn) reportsBtn.onclick = () => goto({name:"reports"});
+  const reportMonth = root.querySelector("#report-month");
+  if (reportMonth) reportMonth.oninput = e => { state.reportMonth=e.target.value; render(); };
+  const addExpenseBtn = root.querySelector("#btn-add-expense");
+  if (addExpenseBtn) addExpenseBtn.onclick = () => goto({name:"addExpense"});
+
+  const addPaymentBtn = root.querySelector("#btn-add-payment");
+  if (addPaymentBtn) addPaymentBtn.onclick = () => goto({name:"addPayment",studentId:activeStudent().id});
+
+  const addLessonBtn = root.querySelector("#btn-add-lesson");
+  if (addLessonBtn) addLessonBtn.onclick = () => goto({ name: "addLesson", studentId: activeStudent().id });
+
+  const shareSummaryBtn = root.querySelector("#btn-share-summary");
+  if (shareSummaryBtn) shareSummaryBtn.onclick = () => {
+    const s = activeStudent();
+    openWhatsApp(s.phone, summaryMessage(s));
+  };
+
+  root.querySelectorAll("[data-share-lesson]").forEach((el) => {
+    el.onclick = () => {
+      const s = activeStudent();
+      const lesson = (state.lessonsByStudent[s.id] || []).find((l) => l.id === el.getAttribute("data-share-lesson"));
+      if (lesson) openWhatsApp(s.phone, lessonMessage(s, lesson));
+    };
+  });
+
+  const toast = root.querySelector("#toast");
+  if (toast) toast.onclick = () => { state.error = ""; render(); };
+
+  /* ---- add student form ---- */
+  const fName = root.querySelector("#f-name");
+  if (fName) {
+    fName.oninput = (e) => { state.draft.name = e.target.value; syncSaveStudentButton(); };
+    const fPhone = root.querySelector("#f-phone");
+    fPhone.oninput = (e) => { state.draft.phone = e.target.value; syncSaveStudentButton(); };
+    root.querySelectorAll("[data-set-license]").forEach((el) => {
+      el.onclick = () => { state.draft.licenseType = el.getAttribute("data-set-license"); render(); refocus("#f-name"); };
+    });
+    const fHours = root.querySelector("#f-hours");
+    fHours.oninput = (e) => { state.draft.totalHoursPlanned = Number(e.target.value) || 0; };
+    const fFee = root.querySelector("#f-fee");
+    if (fFee) fFee.oninput = (e) => { state.draft.courseFee = Number(e.target.value) || 0; };
+    const fStart = root.querySelector("#f-start");
+    fStart.oninput = (e) => { state.draft.startDate = e.target.value; };
+    root.querySelector("#btn-cancel-student").onclick = () => goto({ name: "list" });
+    root.querySelector("#btn-save-student").onclick = () => {
+      const d = state.draft;
+      if (!(d.name.trim().length > 0 && digitsOnly(d.phone).length >= 8)) return;
+      addStudent({
+        id: uid(), name: d.name.trim(), phone: d.phone.trim(),
+        licenseType: d.licenseType, totalHoursPlanned: d.totalHoursPlanned, courseFee: d.courseFee, startDate: d.startDate,
+      });
+    };
+  }
+
+  /* ---- add lesson form ---- */
+  const fDate = root.querySelector("#f-date");
+  if (fDate) {
+    fDate.oninput = (e) => { state.draft.date = e.target.value; };
+    root.querySelector("#f-duration").oninput = (e) => { state.draft.durationMinutes = Number(e.target.value) || 0; };
+    root.querySelectorAll("[data-toggle-skill]").forEach((el) => {
+      el.onclick = () => {
+        const sk = el.getAttribute("data-toggle-skill");
+        const list = state.draft.skills;
+        const idx = list.indexOf(sk);
+        if (idx === -1) list.push(sk); else list.splice(idx, 1);
+        render();
+      };
+    });
+    root.querySelector("#f-notes").oninput = (e) => { state.draft.notes = e.target.value; };
+    root.querySelectorAll("[data-set-rating]").forEach((el) => {
+      el.onclick = () => { state.draft.rating = el.getAttribute("data-set-rating"); render(); };
+    });
+    root.querySelector("#btn-cancel-lesson").onclick = () => goto({ name: "detail", studentId: activeStudent().id });
+    root.querySelector("#btn-save-lesson").onclick = () => {
+      const d = state.draft;
+      const s = activeStudent();
+      addLesson(s.id, {
+        id: uid(), date: d.date, durationMinutes: d.durationMinutes,
+        skills: d.skills, notes: d.notes.trim(), rating: d.rating,
+      });
+    };
+  }
+
+  /* ---- add payment form ---- */
+  const pAmount = root.querySelector("#p-amount");
+  if (pAmount) {
+    pAmount.oninput = e => { state.draft.amount = Number(e.target.value)||0; };
+    root.querySelector("#p-date").oninput = e => { state.draft.date=e.target.value; };
+    root.querySelector("#p-note").oninput = e => { state.draft.note=e.target.value; };
+    root.querySelectorAll("[data-pay-method]").forEach(el => el.onclick=()=>{state.draft.method=el.getAttribute("data-pay-method");render();});
+    root.querySelector("#btn-cancel-payment").onclick=()=>goto({name:"detail",studentId:activeStudent().id});
+    root.querySelector("#btn-save-payment").onclick=()=>{
+      const d=state.draft,s=activeStudent();
+      if(!(Number(d.amount)>0)) return showError("Enter a valid payment amount.");
+      addPayment(s.id,{id:uid(),amount:Number(d.amount),date:d.date,method:d.method,note:(d.note||"").trim()});
+    };
+  }
+
+  /* ---- add expense form ---- */
+  const eAmount = root.querySelector("#e-amount");
+  if (eAmount) {
+    eAmount.oninput=e=>{state.draft.amount=Number(e.target.value)||0;};
+    root.querySelector("#e-date").oninput=e=>{state.draft.date=e.target.value;};
+    root.querySelector("#e-note").oninput=e=>{state.draft.note=e.target.value;};
+    root.querySelectorAll("[data-exp-category]").forEach(el=>el.onclick=()=>{state.draft.category=el.getAttribute("data-exp-category");render();});
+    root.querySelector("#btn-cancel-expense").onclick=()=>goto({name:"reports"});
+    root.querySelector("#btn-save-expense").onclick=()=>{const d=state.draft;if(!(Number(d.amount)>0))return showError("Enter a valid expense amount.");addExpense({id:uid(),amount:Number(d.amount),date:d.date,category:d.category,note:(d.note||"").trim()});};
+  }
+}
+
+function syncSaveStudentButton() {
+  const btn = document.getElementById("btn-save-student");
+  if (!btn) return;
+  const d = state.draft;
+  btn.disabled = !(d.name.trim().length > 0 && digitsOnly(d.phone).length >= 8);
+}
+function refocus(sel) {
+  const el = document.querySelector(sel);
+  if (el) el.focus();
+}
+
+render();
+
+if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+  });
+}
+</script>
+</body>
+</html>

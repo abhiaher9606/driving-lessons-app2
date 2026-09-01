@@ -1,0 +1,25 @@
+{
+  "name": "DRIVING LESSONS \u2014 Training Manager",
+  "short_name": "DRIVING LESSONS",
+  "description": "Driving student, lesson, payment, income and expense manager.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#22262B",
+  "theme_color": "#F5B700",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
