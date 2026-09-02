@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.app.DownloadManager;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.view.View;
+import android.view.WindowInsets;
 import android.webkit.CookieManager;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
@@ -15,10 +18,6 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.webkit.URLUtil;
 import android.widget.Toast;
-import android.view.View;
-import android.view.ViewGroup;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends Activity {
     private WebView webView;
@@ -32,14 +31,20 @@ public class MainActivity extends Activity {
         webView = new WebView(this);
         setContentView(webView);
 
-        // 1. FIX TOP HEADER OVERLAP (Adds safe area inset for notch/status bar)
-        ViewCompat.setOnApplyWindowInsetsListener(webView, (v, insets) -> {
-            int topInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
-            v.setPadding(0, topInset, 0, 0);
-            return insets;
-        });
+        // 1. SAFE AREA PADDING FOR CAMERA NOTCH & STATUS BAR
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            webView.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets insets) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        v.setPadding(0, insets.getSystemWindowInsetTop(), 0, 0);
+                    }
+                    return insets;
+                }
+            });
+        }
 
-        // 2. CONFIGURE WEBVIEW SETTINGS FOR PAYMENTS & DATA STORAGE
+        // 2. WEBVIEW SETTINGS FOR PAYMENTS & STORAGE
         WebSettings webSettings = webView.getSettings();
         webSettings.setJavaScriptEnabled(true);
         webSettings.setDomStorageEnabled(true);
@@ -48,7 +53,7 @@ public class MainActivity extends Activity {
         webSettings.setAllowContentAccess(true);
         webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
 
-        // 3. HANDLE PAYMENTS & NAVIGATION
+        // 3. EXTERNAL APPS & PAYMENT LINKS (UPI, PhonePe, Paytm, etc.)
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
@@ -58,7 +63,6 @@ public class MainActivity extends Activity {
                     return false;
                 }
 
-                // Handle UPI, Paytm, PhonePe, and external apps
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(intent);
@@ -70,7 +74,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // 4. HANDLE FILE CHOOSER FOR "RESTORE" BUTTON
+        // 4. FILE PICKER FOR "RESTORE" BUTTON
         webView.setWebChromeClient(new WebChromeClient() {
             @Override
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
@@ -90,7 +94,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // 5. HANDLE "BACKUP" DOWNLOADS
+        // 5. DOWNLOAD LISTENER FOR "BACKUP" BUTTON
         webView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
             try {
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -116,7 +120,7 @@ public class MainActivity extends Activity {
         webView.loadUrl("file:///android_asset/index.html");
     }
 
-    // Process file restoration selection
+    // Handle return result from file restoration picker
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == FILECHOOSER_RESULTCODE) {
