@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.webkit.CookieManager;
-import android.webkit.ValueCallback;
+import android.webkit.URLUtil;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -76,7 +76,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Load your assets or web URL (Update string path if loading local assets)
+        // Load your assets or web URL
         webView.loadUrl("file:///android_asset/index.html");
     }
 
