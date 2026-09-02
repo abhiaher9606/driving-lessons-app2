@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>DRIVING LESSONS — Training Manager</title>
 <meta name="theme-color" content="#F5B700" />
 <meta name="description" content="Manage driving students, lessons, payments, balances, and WhatsApp progress updates." />
@@ -24,6 +24,15 @@
     --stop-red: #D64545;
     --line: #D9DCE1;
   }
+  body {
+    padding-top: env(safe-area-inset-top, 20px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    box-sizing: border-box;
+}
+
+.header, .navbar, .top-bar {
+    padding-top: max(12px, env(safe-area-inset-top));
+}
   html, body { margin: 0; padding: 0; background: var(--paper); }
   * { box-sizing: border-box; }
   body, input, textarea, button { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, sans-serif; }
