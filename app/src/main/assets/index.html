@@ -25,25 +25,24 @@
     --line: #D9DCE1;
   }
   
-.header, .navbar, .top-bar {
-    padding-top: max(12px, env(safe-area-inset-top));
-}
-  html, body { 
-      margin: 0; 
-      padding: 0; 
-      background: var(--paper); 
-    }
-  body {
-      padding-top: env(safe-area-inset-top, 20px);
-      padding-bottom: env(safe-area-inset-bottom, 0px);
-      box-sizing: border-box;
-    }
+  /* FIXED CSS RESET & SAFE AREA MARGINS */
   * { box-sizing: border-box; }
-  body, input, textarea, button { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, sans-serif; }
+  html { background: var(--asphalt); }
+  body { 
+    margin: 0; 
+    padding: 0; 
+    background: var(--paper); 
+    padding-top: env(safe-area-inset-top, 24px);
+    padding-bottom: env(safe-area-inset-bottom, 12px);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, sans-serif;
+  }
+
   button { cursor: pointer; }
+  input, textarea, button { font-family: inherit; }
   .display { font-family: "Arial Narrow", "Helvetica Neue Condensed", Arial, sans-serif; font-weight: 700; letter-spacing: 0.2px; }
   #root { min-height: 100vh; }
   .phone { width: 100%; max-width: 480px; margin: 0 auto; background: var(--paper); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
+  
   .topbar { background: var(--asphalt); padding: 18px 14px; display: flex; align-items: center; gap: 8px; position: sticky; top: 0; z-index: 5; }
   .topbar-title { flex: 1; text-align: center; color: var(--paper); font-size: 22px; }
   .badge, .icon-btn { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: none; }
@@ -207,7 +206,7 @@ const state = {
   lessonsByStudent: {},
   view: { name: "list" },
   error: "",
-  draft: {}, // scratch values for the currently open form
+  draft: {},
 };
 state.students.forEach((s) => { state.lessonsByStudent[s.id] = storageGet("lessons:" + s.id, []); });
 
@@ -269,7 +268,6 @@ function summaryMessage(student) {
     "Keep up the good work!",
   ].join("\n");
 }
-
 
 /* ============ payments + dashboard extension ============ */
 state.paymentsByStudent = {};
@@ -594,7 +592,6 @@ function bindEvents() {
   root.querySelectorAll("[data-open]").forEach((el) => {
     el.onclick = () => goto({ name: "detail", studentId: el.getAttribute("data-open") });
   });
-
 
   const exportBtn = root.querySelector("#btn-export");
   if (exportBtn) exportBtn.onclick = exportData;
