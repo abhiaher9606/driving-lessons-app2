@@ -7,41 +7,58 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.webkit.CookieManager;
-import android.webkit.URLUtil;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.URLUtil;
 import android.widget.Toast;
+import android.view.View;
+import android.view.ViewGroup;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public class MainActivity extends Activity {
     private WebView webView;
+    private ValueCallback<Uri[]> filePathCallback;
+    private final static int FILECHOOSER_RESULTCODE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        
+
         webView = new WebView(this);
         setContentView(webView);
 
-        // Enable essential WebView settings
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.getSettings().setDomStorageEnabled(true);
-        webView.getSettings().setAllowFileAccess(true);
-        webView.getSettings().setAllowContentAccess(true);
+        // 1. FIX TOP HEADER OVERLAP (Adds safe area inset for notch/status bar)
+        ViewCompat.setOnApplyWindowInsetsListener(webView, (v, insets) -> {
+            int topInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).top;
+            v.setPadding(0, topInset, 0, 0);
+            return insets;
+        });
 
-        // Fix external link navigation (Payments, UPI, External pages)
+        // 2. CONFIGURE WEBVIEW SETTINGS FOR PAYMENTS & DATA STORAGE
+        WebSettings webSettings = webView.getSettings();
+        webSettings.setJavaScriptEnabled(true);
+        webSettings.setDomStorageEnabled(true);
+        webSettings.setDatabaseEnabled(true);
+        webSettings.setAllowFileAccess(true);
+        webSettings.setAllowContentAccess(true);
+        webSettings.setJavaScriptCanOpenWindowsAutomatically(true);
+
+        // 3. HANDLE PAYMENTS & NAVIGATION
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 String url = request.getUrl().toString();
-                
-                // Allow web pages to load inside WebView
-                if (url.startsWith("http://") || url.startsWith("https://")) {
+
+                if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("file://")) {
                     return false;
                 }
 
-                // Redirect payment apps (UPI, Paytm, PhonePe, Razorpay) to native apps
+                // Handle UPI, Paytm, PhonePe, and external apps
                 try {
                     Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
                     startActivity(intent);
@@ -53,7 +70,27 @@ public class MainActivity extends Activity {
             }
         });
 
-        // Enable Download Manager for Export & Backup buttons inside WebView
+        // 4. HANDLE FILE CHOOSER FOR "RESTORE" BUTTON
+        webView.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+                if (MainActivity.this.filePathCallback != null) {
+                    MainActivity.this.filePathCallback.onReceiveValue(null);
+                }
+                MainActivity.this.filePathCallback = filePathCallback;
+
+                Intent intent = fileChooserParams.createIntent();
+                try {
+                    startActivityForResult(intent, FILECHOOSER_RESULTCODE);
+                } catch (Exception e) {
+                    MainActivity.this.filePathCallback = null;
+                    return false;
+                }
+                return true;
+            }
+        });
+
+        // 5. HANDLE "BACKUP" DOWNLOADS
         webView.setDownloadListener((url, userAgent, contentDisposition, mimetype, contentLength) -> {
             try {
                 DownloadManager.Request request = new DownloadManager.Request(Uri.parse(url));
@@ -65,22 +102,33 @@ public class MainActivity extends Activity {
                 request.allowScanningByMediaScanner();
                 request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
                 request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, URLUtil.guessFileName(url, contentDisposition, mimetype));
-                
+
                 DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
                 if (dm != null) {
                     dm.enqueue(request);
-                    Toast.makeText(getApplicationContext(), "Downloading File...", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "Backup Download Started...", Toast.LENGTH_LONG).show();
                 }
             } catch (Exception e) {
                 Toast.makeText(getApplicationContext(), "Download Failed: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         });
 
-        // Load your assets or web URL
         webView.loadUrl("file:///android_asset/index.html");
     }
 
-    // Enable hardware back button navigation inside WebView screens
+    // Process file restoration selection
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == FILECHOOSER_RESULTCODE) {
+            if (filePathCallback == null) return;
+            filePathCallback.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+            filePathCallback = null;
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
+        }
+    }
+
+    // Hardware back button navigation
     @Override
     public void onBackPressed() {
         if (webView != null && webView.canGoBack()) {
