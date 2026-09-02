@@ -25,7 +25,6 @@
     --line: #D9DCE1;
   }
   
-  /* FIXED CSS RESET & SAFE AREA MARGINS */
   * { box-sizing: border-box; }
   html { background: var(--asphalt); }
   body { 
@@ -50,7 +49,7 @@
   .icon-btn { background: transparent; }
   .body { flex: 1; overflow-y: auto; }
   .list-wrap { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
-  .empty { padding: 28px 4px; }
+  .empty { padding: 20px 4px; text-align: center; }
   .empty-title { font-size: 20px; color: var(--ink); margin-bottom: 6px; }
   .empty-body { font-size: 14px; color: var(--muted); line-height: 1.5; }
   .student-card { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-align: left; width: 100%; margin-bottom: 10px; }
@@ -60,14 +59,14 @@
   .progress-track { position: relative; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
   .progress-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--road-yellow); border-radius: 3px; transition: width 0.3s ease; }
   .progress-dash { position: absolute; left: 0; right: 0; top: 50%; height: 1px; border-top: 1px dashed rgba(0,0,0,0.15); }
-  .fab { margin-top: 12px; margin-bottom: 24px; width: 100%; background: var(--road-yellow); border: none; border-radius: 12px; padding: 13px 16px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; color: var(--asphalt); }
-  .detail-header { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 4px; }
+  .fab { margin-top: 10px; margin-bottom: 12px; width: 100%; background: var(--road-yellow); border: none; border-radius: 12px; padding: 13px 16px; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 15px; color: var(--asphalt); }
+  .detail-header { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
   .detail-meta-row { font-size: 13px; color: var(--muted); display: flex; gap: 6px; margin-bottom: 10px; }
   .hours-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
   .hours-big { font-size: 34px; color: var(--ink); line-height: 1; }
   .hours-small { font-size: 14px; color: var(--muted); }
   .summary-btn { margin-top: 14px; width: 100%; background: rgba(47,143,91,0.08); border: 1px solid rgba(47,143,91,0.35); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 600; color: var(--go-green); }
-  .section-label { font-size: 16px; color: var(--ink); margin: 14px 2px 4px; }
+  .section-label { font-size: 16px; color: var(--ink); margin: 14px 2px 8px; }
   .timeline-row { display: flex; gap: 10px; }
   .timeline-marker-col { display: flex; flex-direction: column; align-items: center; width: 16px; padding-top: 18px; }
   .timeline-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--road-yellow); border: 2px solid var(--asphalt); flex-shrink: 0; }
@@ -103,14 +102,18 @@
   .stat-value { font-size:22px; color:var(--ink); margin-top:4px; }
   .green { color:var(--go-green)!important; }
   .red { color:var(--stop-red)!important; }
-  .payment-card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:10px; }
+  
+  .payment-box { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 14px; margin-bottom: 12px; }
+  .payment-summary-row { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; text-align: center; margin-bottom: 12px; }
+  .pay-stat-val { font-size: 16px; font-weight: 700; margin-top: 2px; }
+  .pay-btn { width: 100%; background: rgba(245,183,0,0.15); border: 1px solid var(--road-yellow); border-radius: 10px; padding: 10px 12px; font-size: 13.5px; font-weight: 700; color: var(--asphalt); display: flex; align-items: center; justify-content: center; gap: 6px; }
+
+  .payment-card { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; margin-bottom:8px; }
   .payment-top { display:flex; justify-content:space-between; gap:8px; }
-  .payment-amount { font-size:18px; font-weight:700; }
-  .payment-meta { font-size:12.5px; color:var(--muted); margin-top:5px; }
+  .payment-amount { font-size:16px; font-weight:700; }
+  .payment-meta { font-size:12.5px; color:var(--muted); margin-top:2px; }
   .quick-row { display:flex; gap:8px; padding:12px 16px 0; }
   .quick-btn { flex:1; border:1px solid var(--line); background:var(--card); border-radius:10px; padding:10px 6px; font-weight:600; color:var(--ink); }
-  .danger-btn { border:1px solid rgba(214,69,69,.35); color:var(--stop-red); background:var(--card); border-radius:10px; padding:10px 12px; font-weight:600; }
-  .select { border:1px solid var(--line); border-radius:9px; padding:10px 12px; font-size:14.5px; color:var(--ink); background:var(--card); width:100%; }
   @media(max-width:360px){.dashboard{grid-template-columns:1fr}.quick-row{flex-direction:column}}
 
   .report-wrap { padding:14px 16px 24px; }
@@ -133,7 +136,6 @@
 <script>
 "use strict";
 
-/* ============ tiny inline icon set (no external deps) ============ */
 function svg(inner, size, color, stroke) {
   return '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="' +
     (color || 'currentColor') + '" stroke-width="' + (stroke || 2) +
@@ -151,6 +153,7 @@ const ICONS = {
   car: (s, c) => svg('<path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM3 17V11l2-5h14l2 5v6"/>', s, c),
   bike: (s, c) => svg('<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 100-2 1 1 0 000 2zM12 17.5V14l-3-3 4-3 2 3h2"/>', s, c),
   truck: (s, c) => svg('<rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>', s, c),
+  wallet: (s, c) => svg('<path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2 2 2 0 0 0 2 2h4v-4h-4z"/>', s, c),
 };
 
 const LICENSE_TYPES = [
@@ -177,6 +180,7 @@ const RATINGS = [
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 function todayISO() { return new Date().toISOString().slice(0, 10); }
 function formatDate(iso) {
+  if(!iso) return "—";
   const d = new Date(iso + "T00:00:00");
   return d.toLocaleDateString(undefined, { day: "numeric", month: "short", year: "numeric" });
 }
@@ -200,15 +204,21 @@ function storageSet(key, value) {
   catch (e) { return false; }
 }
 
-/* ============ app state ============ */
 const state = {
   students: storageGet("students", []),
   lessonsByStudent: {},
+  paymentsByStudent: {},
+  expenses: storageGet("expenses", []),
+  reportMonth: todayISO().slice(0,7),
   view: { name: "list" },
   error: "",
   draft: {},
 };
-state.students.forEach((s) => { state.lessonsByStudent[s.id] = storageGet("lessons:" + s.id, []); });
+
+state.students.forEach((s) => { 
+  state.lessonsByStudent[s.id] = storageGet("lessons:" + s.id, []); 
+  state.paymentsByStudent[s.id] = storageGet("payments:" + s.id, []); 
+});
 
 function activeStudent() {
   return state.students.find((s) => s.id === state.view.studentId) || null;
@@ -217,6 +227,13 @@ function hoursCompleted(studentId) {
   const entries = state.lessonsByStudent[studentId] || [];
   return entries.reduce((sum, l) => sum + (Number(l.durationMinutes) || 0), 0) / 60;
 }
+function paymentsTotal(studentId) {
+  return (state.paymentsByStudent[studentId] || []).reduce((sum,p) => sum + (Number(p.amount)||0), 0);
+}
+function totalCourseFee(s) { return Number(s.courseFee) || 0; }
+function balanceFor(s) { return Math.max(0, totalCourseFee(s) - paymentsTotal(s.id)); }
+function money(n) { return "₹" + Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:2}); }
+
 function showError(msg) { state.error = msg; render(); setTimeout(() => { state.error = ""; render(); }, 3500); }
 
 function goto(view) { state.view = view; state.draft = {}; render(); }
@@ -224,14 +241,22 @@ function goto(view) { state.view = view; state.draft = {}; render(); }
 function addStudent(student) {
   state.students.push(student);
   state.lessonsByStudent[student.id] = [];
-  if (!storageSet("students", state.students)) showError("Couldn't save the student. Try again.");
+  state.paymentsByStudent[student.id] = [];
+  if (!storageSet("students", state.students)) showError("Couldn't save student.");
   goto({ name: "detail", studentId: student.id });
 }
 function addLesson(studentId, lesson) {
   const list = state.lessonsByStudent[studentId] || [];
   list.unshift(lesson);
   state.lessonsByStudent[studentId] = list;
-  if (!storageSet("lessons:" + studentId, list)) showError("Couldn't save the lesson. Try again.");
+  if (!storageSet("lessons:" + studentId, list)) showError("Couldn't save lesson.");
+  goto({ name: "detail", studentId });
+}
+function addPayment(studentId, payment) {
+  const list = state.paymentsByStudent[studentId] || [];
+  list.unshift(payment);
+  state.paymentsByStudent[studentId] = list;
+  if (!storageSet("payments:" + studentId, list)) showError("Couldn't save payment.");
   goto({ name: "detail", studentId });
 }
 
@@ -269,36 +294,10 @@ function summaryMessage(student) {
   ].join("\n");
 }
 
-/* ============ payments + dashboard extension ============ */
-state.paymentsByStudent = {};
-state.students.forEach((s) => { state.paymentsByStudent[s.id] = storageGet("payments:" + s.id, []); });
-state.expenses = storageGet("expenses", []);
-state.reportMonth = todayISO().slice(0,7);
+function collectedTotal() { return state.students.reduce((n,s)=>n+paymentsTotal(s.id),0); }
+function outstandingTotal() { return state.students.reduce((n,s)=>n+balanceFor(s),0); }
 
-function paymentsTotal(studentId) {
-  return (state.paymentsByStudent[studentId] || []).reduce((sum,p) => sum + (Number(p.amount)||0), 0);
-}
-function totalCourseFee(s) { return Number(s.courseFee) || 0; }
-function balanceFor(s) { return Math.max(0, totalCourseFee(s) - paymentsTotal(s.id)); }
-function money(n) { return "₹" + Number(n||0).toLocaleString("en-IN",{maximumFractionDigits:2}); }
-function addPayment(studentId, payment) {
-  const list = state.paymentsByStudent[studentId] || [];
-  list.unshift(payment);
-  state.paymentsByStudent[studentId] = list;
-  if (!storageSet("payments:" + studentId, list)) showError("Couldn't save the payment. Try again.");
-  goto({name:"detail", studentId});
-}
-function paymentsCount() {
-  return state.students.reduce((n,s)=>n+(state.paymentsByStudent[s.id]||[]).length,0);
-}
-function collectedTotal() {
-  return state.students.reduce((n,s)=>n+paymentsTotal(s.id),0);
-}
-function outstandingTotal() {
-  return state.students.reduce((n,s)=>n+balanceFor(s),0);
-}
 function dashboardHtml() {
-  const hours = state.students.reduce((n,s)=>n+hoursCompleted(s.id),0);
   return '<div class="dashboard">' +
     '<div class="stat"><div class="stat-label">STUDENTS</div><div class="stat-value">'+state.students.length+'</div></div>' +
     '<div class="stat"><div class="stat-label">LESSONS</div><div class="stat-value">'+state.students.reduce((n,s)=>n+(state.lessonsByStudent[s.id]||[]).length,0)+'</div></div>' +
@@ -306,30 +305,19 @@ function dashboardHtml() {
     '<div class="stat"><div class="stat-label">PENDING</div><div class="stat-value red">'+money(outstandingTotal())+'</div></div>' +
     '</div>';
 }
+
 function paymentListHtml(s) {
   const list = state.paymentsByStudent[s.id] || [];
-  if (!list.length) return '<div class="empty"><div class="empty-body">No payments recorded yet.</div></div>';
+  if (!list.length) return '<div class="empty"><div class="empty-body">No received payments logged yet.</div></div>';
   return list.map(p =>
-    '<div class="payment-card"><div class="payment-top"><div><div class="payment-amount green">'+money(p.amount)+'</div><div class="payment-meta">'+formatDate(p.date)+' · '+escapeHtml(p.method||"Other")+'</div></div>' +
+    '<div class="payment-card"><div class="payment-top"><div><div class="payment-amount green">'+money(p.amount)+'</div><div class="payment-meta">'+formatDate(p.date)+' · '+escapeHtml(p.method||"Cash")+'</div></div>' +
     (p.note ? '<div class="payment-meta">'+escapeHtml(p.note)+'</div>' : '') + '</div></div>'
   ).join("");
 }
-function paymentFormHtml(s) {
-  const d=state.draft;
-  if(d.amount===undefined)d.amount="";
-  if(d.date===undefined)d.date=todayISO();
-  if(d.method===undefined)d.method="Cash";
-  if(d.note===undefined)d.note="";
-  return '<div class="form-subhead">For '+escapeHtml(s.name)+'</div>'+
-    fieldHtml("Amount received (₹)",'<input class="input" id="p-amount" type="number" min="1" step="1" value="'+escapeHtml(d.amount)+'" placeholder="e.g. 3000" />')+
-    fieldHtml("Payment date",'<input class="input" id="p-date" type="date" value="'+d.date+'" />')+
-    fieldHtml("Payment method",'<div class="pill-row">'+["Cash","UPI","Bank transfer","Card","Other"].map(m=>'<button type="button" class="select-pill'+(d.method===m?' active':'')+'" data-pay-method="'+m+'">'+m+'</button>').join("")+'</div>')+
-    fieldHtml("Notes (optional)",'<input class="input" id="p-note" value="'+escapeHtml(d.note)+'" placeholder="e.g. 2nd installment" />')+
-    '<div class="form-actions"><button class="secondary-btn" id="btn-cancel-payment">Cancel</button><button class="primary-btn" id="btn-save-payment">Save payment</button></div>';
-}
+
 function addExpense(expense) {
   state.expenses.unshift(expense);
-  if (!storageSet("expenses", state.expenses)) showError("Couldn't save the expense. Try again.");
+  if (!storageSet("expenses", state.expenses)) showError("Couldn't save expense.");
   goto({name:"reports"});
 }
 function monthLabel(key) { const d=new Date(key+"-01T00:00:00"); return d.toLocaleDateString(undefined,{month:"long",year:"numeric"}); }
@@ -340,6 +328,7 @@ function monthPayments(key) {
 function monthExpenses(key) { return state.expenses.filter(e=>(e.date||"").slice(0,7)===key).sort((a,b)=>String(b.date).localeCompare(String(a.date))); }
 function monthlyReceived(key) { return monthPayments(key).reduce((n,p)=>n+(Number(p.amount)||0),0); }
 function monthlyExpenses(key) { return monthExpenses(key).reduce((n,e)=>n+(Number(e.amount)||0),0); }
+
 function reportHtml() {
   const key=state.reportMonth||todayISO().slice(0,7), pays=monthPayments(key), exps=monthExpenses(key), received=monthlyReceived(key), spent=monthlyExpenses(key);
   const net=received-spent, lessons=state.students.reduce((n,s)=>n+(state.lessonsByStudent[s.id]||[]).filter(l=>(l.date||"").slice(0,7)===key).length,0);
@@ -360,14 +349,7 @@ function reportHtml() {
     '<div class="section-label display">Overall outstanding</div><div class="stat"><div class="stat-label">TOTAL PENDING FROM STUDENTS</div><div class="stat-value red">'+money(outstandingTotal())+'</div></div>'+
     '</div>';
 }
-function expenseFormHtml() {
-  const d=state.draft;if(d.amount===undefined)d.amount="";if(d.date===undefined)d.date=todayISO();if(d.category===undefined)d.category="Fuel";if(d.note===undefined)d.note="";
-  return fieldHtml("Amount (₹)",'<input class="input" id="e-amount" type="number" min="1" value="'+escapeHtml(d.amount)+'" placeholder="e.g. 500" />')+
-    fieldHtml("Expense date",'<input class="input" id="e-date" type="date" value="'+d.date+'" />')+
-    fieldHtml("Category",'<div class="pill-row">'+["Fuel","Vehicle maintenance","Advertising","Office","Other"].map(m=>'<button type="button" class="select-pill'+(d.category===m?' active':'')+'" data-exp-category="'+m+'">'+m+'</button>').join('')+'</div>')+
-    fieldHtml("Notes",'<input class="input" id="e-note" value="'+escapeHtml(d.note)+'" placeholder="Optional" />')+
-    '<div class="form-actions"><button class="secondary-btn" id="btn-cancel-expense">Cancel</button><button class="primary-btn" id="btn-save-expense">Save expense</button></div>';
-}
+
 function exportData() {
   const data={version:3,exportedAt:new Date().toISOString(),students:state.students,lessons:{},payments:{},expenses:state.expenses};
   state.students.forEach(s=>{data.lessons[s.id]=state.lessonsByStudent[s.id]||[];data.payments[s.id]=state.paymentsByStudent[s.id]||[];});
@@ -385,7 +367,6 @@ function importData() {
   input.click();
 }
 
-/* ============ render ============ */
 function progressBarHtml(done, total) {
   const pct = Math.max(0, Math.min(100, (done / Math.max(total, 0.01)) * 100));
   return '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div><div class="progress-dash"></div></div>';
@@ -397,7 +378,7 @@ function topBarHtml() {
   const title = v.name === "list" ? "DriveLog"
     : v.name === "addStudent" ? "New student"
     : v.name === "addLesson" ? "Log lesson"
-    : v.name === "addPayment" ? "Add payment"
+    : v.name === "addPayment" ? "Add received payment"
     : v.name === "reports" ? "Monthly report"
     : v.name === "addExpense" ? "Add expense"
     : s ? escapeHtml(s.name) : "DRIVING LESSONS";
@@ -410,18 +391,19 @@ function topBarHtml() {
 function studentListHtml() {
   if (state.students.length === 0) {
     return '<div class="empty"><div class="empty-title display">No students yet</div>' +
-      '<div class="empty-body">Add your first student to start logging lessons and sending progress updates.</div></div>' +
+      '<div class="empty-body">Add your first student to start logging lessons and payments.</div></div>' +
       '<button class="fab" id="btn-add-student">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">New student</span></button>';
   }
   const cards = state.students.map((s) => {
     const done = hoursCompleted(s.id);
     const count = (state.lessonsByStudent[s.id] || []).length;
     const li = licenseInfo(s.licenseType);
+    const pending = balanceFor(s);
     return '<button class="student-card" data-open="' + s.id + '">' +
       '<div class="student-icon">' + ICONS[li.icon](18, "var(--asphalt)") + '</div>' +
       '<div style="flex:1;text-align:left">' +
         '<div class="student-name display">' + escapeHtml(s.name) + '</div>' +
-        '<div class="student-meta">' + count + ' lesson' + (count === 1 ? '' : 's') + ' · ' + done.toFixed(1) + '/' + s.totalHoursPlanned + ' hrs</div>' +
+        '<div class="student-meta">' + count + ' lesson' + (count === 1 ? '' : 's') + ' · ' + done.toFixed(1) + '/' + s.totalHoursPlanned + ' hrs' + (pending > 0 ? ' · <span class="red">Bal: ' + money(pending) + '</span>' : '') + '</div>' +
         progressBarHtml(done, s.totalHoursPlanned) +
       '</div>' +
       ICONS.chev(18, "var(--muted)") +
@@ -434,6 +416,10 @@ function studentDetailHtml(s) {
   const lessons = state.lessonsByStudent[s.id] || [];
   const done = hoursCompleted(s.id);
   const li = licenseInfo(s.licenseType);
+  const rec = paymentsTotal(s.id);
+  const fee = totalCourseFee(s);
+  const bal = balanceFor(s);
+
   let timelineHtml;
   if (lessons.length === 0) {
     timelineHtml = '<div class="empty"><div class="empty-title display">No lessons logged yet</div>' +
@@ -460,6 +446,7 @@ function studentDetailHtml(s) {
     }).join("");
     timelineHtml = '<div class="timeline">' + timelineHtml + '</div>';
   }
+
   return (
     '<div class="detail-header">' +
       '<div class="detail-meta-row"><span>' + li.label + '</span><span>· Started ' + formatDate(s.startDate) + '</span></div>' +
@@ -467,6 +454,20 @@ function studentDetailHtml(s) {
       progressBarHtml(done, s.totalHoursPlanned) +
       '<button class="summary-btn" id="btn-share-summary">' + ICONS.chat(16, "var(--go-green)") + '<span style="margin-left:8px">Send progress summary on WhatsApp</span></button>' +
     '</div>' +
+
+    /* PAYMENT SUMMARY & ADD PAYMENT BUTTON */
+    '<div class="payment-box">' +
+      '<div class="payment-summary-row">' +
+        '<div><div class="stat-label">COURSE FEE</div><div class="pay-stat-val">' + money(fee) + '</div></div>' +
+        '<div><div class="stat-label">RECEIVED</div><div class="pay-stat-val green">' + money(rec) + '</div></div>' +
+        '<div><div class="stat-label">BALANCE</div><div class="pay-stat-val red">' + money(bal) + '</div></div>' +
+      '</div>' +
+      '<button class="pay-btn" id="btn-add-payment">' + ICONS.wallet(16, "var(--asphalt)") + ' ＋ Add received payment</button>' +
+    '</div>' +
+
+    '<div class="section-label display">Payment history</div>' +
+    paymentListHtml(s) +
+
     '<div class="section-label display">Lesson history</div>' +
     timelineHtml +
     '<button class="fab" id="btn-add-lesson">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">Log today\'s lesson</span></button>'
@@ -483,7 +484,7 @@ function addStudentFormHtml() {
   if (d.phone === undefined) d.phone = "+91";
   if (d.licenseType === undefined) d.licenseType = LICENSE_TYPES[1].id;
   if (d.totalHoursPlanned === undefined) d.totalHoursPlanned = 20;
-  if (d.courseFee === undefined) d.courseFee = 0;
+  if (d.courseFee === undefined) d.courseFee = 5000;
   if (d.startDate === undefined) d.startDate = todayISO();
 
   const licensePills = LICENSE_TYPES.map((lt) =>
@@ -494,10 +495,10 @@ function addStudentFormHtml() {
 
   return (
     fieldHtml("Student name", '<input class="input" id="f-name" value="' + escapeHtml(d.name) + '" placeholder="e.g. Priya Sharma" />') +
-    fieldHtml("WhatsApp number (with country code)", '<input class="input" id="f-phone" value="' + escapeHtml(d.phone) + '" placeholder="+91 98765 43210" />') +
+    fieldHtml("WhatsApp number", '<input class="input" id="f-phone" value="' + escapeHtml(d.phone) + '" placeholder="+91 98765 43210" />') +
     fieldHtml("License type", '<div class="pill-row">' + licensePills + '</div>') +
     fieldHtml("Planned course hours", '<input class="input" id="f-hours" type="number" min="1" value="' + d.totalHoursPlanned + '" />') +
-    fieldHtml("Total course fee (₹)", '<input class="input" id="f-fee" type="number" min="0" value="' + (d.courseFee || 0) + '" />') +
+    fieldHtml("Total course fee (₹)", '<input class="input" id="f-fee" type="number" min="0" value="' + d.courseFee + '" />') +
     fieldHtml("Start date", '<input class="input" id="f-start" type="date" value="' + d.startDate + '" />') +
     '<div class="form-actions">' +
       '<button class="secondary-btn" id="btn-cancel-student">Cancel</button>' +
@@ -536,6 +537,42 @@ function addLessonFormHtml(s) {
       '<button class="secondary-btn" id="btn-cancel-lesson">Cancel</button>' +
       '<button class="primary-btn" id="btn-save-lesson">Save lesson</button>' +
     '</div>'
+  );
+}
+
+function paymentFormHtml(s) {
+  const d=state.draft;
+  if(d.amount===undefined) d.amount="";
+  if(d.date===undefined) d.date=todayISO();
+  if(d.method===undefined) d.method="Cash";
+  if(d.note===undefined) d.note="";
+
+  return (
+    '<div class="form-subhead">Log payment for ' + escapeHtml(s.name) + '</div>' +
+    fieldHtml("Amount received (₹)", '<input class="input" id="p-amount" type="number" min="1" step="1" value="' + escapeHtml(d.amount) + '" placeholder="e.g. 2000" />') +
+    fieldHtml("Payment date", '<input class="input" id="p-date" type="date" value="' + d.date + '" />') +
+    fieldHtml("Payment method", '<div class="pill-row">' + ["Cash","UPI","Bank transfer","Card","Other"].map(m => '<button type="button" class="select-pill' + (d.method===m?' active':'') + '" data-pay-method="' + m + '">' + m + '</button>').join("") + '</div>') +
+    fieldHtml("Note / Remarks (optional)", '<input class="input" id="p-note" value="' + escapeHtml(d.note) + '" placeholder="e.g. 1st installment" />') +
+    '<div class="form-actions">' +
+      '<button class="secondary-btn" id="btn-cancel-payment">Cancel</button>' +
+      '<button class="primary-btn" id="btn-save-payment">Save payment</button>' +
+    '</div>'
+  );
+}
+
+function expenseFormHtml() {
+  const d=state.draft;
+  if(d.amount===undefined)d.amount="";
+  if(d.date===undefined)d.date=todayISO();
+  if(d.category===undefined)d.category="Fuel";
+  if(d.note===undefined)d.note="";
+
+  return (
+    fieldHtml("Amount (₹)",'<input class="input" id="e-amount" type="number" min="1" value="'+escapeHtml(d.amount)+'" placeholder="e.g. 500" />')+
+    fieldHtml("Expense date",'<input class="input" id="e-date" type="date" value="'+d.date+'" />')+
+    fieldHtml("Category",'<div class="pill-row">'+["Fuel","Vehicle maintenance","Advertising","Office","Other"].map(m=>'<button type="button" class="select-pill'+(d.category===m?' active':'')+'" data-exp-category="'+m+'">'+m+'</button>').join('')+'</div>')+
+    fieldHtml("Notes",'<input class="input" id="e-note" value="'+escapeHtml(d.note)+'" placeholder="Optional" />')+
+    '<div class="form-actions"><button class="secondary-btn" id="btn-cancel-expense">Cancel</button><button class="primary-btn" id="btn-save-expense">Save expense</button></div>'
   );
 }
 
@@ -584,7 +621,7 @@ function bindEvents() {
   const root = document.getElementById("root");
 
   const back = root.querySelector("#btn-back");
-  if (back) back.onclick = () => goto({ name: "list" });
+  if (back) back.onclick = () => goto(state.view.name === "addPayment" ? { name: "detail", studentId: activeStudent().id } : { name: "list" });
 
   const addStudentBtn = root.querySelector("#btn-add-student");
   if (addStudentBtn) addStudentBtn.onclick = () => goto({ name: "addStudent" });
@@ -605,7 +642,7 @@ function bindEvents() {
   if (addExpenseBtn) addExpenseBtn.onclick = () => goto({name:"addExpense"});
 
   const addPaymentBtn = root.querySelector("#btn-add-payment");
-  if (addPaymentBtn) addPaymentBtn.onclick = () => goto({name:"addPayment",studentId:activeStudent().id});
+  if (addPaymentBtn) addPaymentBtn.onclick = () => goto({ name: "addPayment", studentId: activeStudent().id });
 
   const addLessonBtn = root.querySelector("#btn-add-lesson");
   if (addLessonBtn) addLessonBtn.onclick = () => goto({ name: "addLesson", studentId: activeStudent().id });
@@ -627,7 +664,7 @@ function bindEvents() {
   const toast = root.querySelector("#toast");
   if (toast) toast.onclick = () => { state.error = ""; render(); };
 
-  /* ---- add student form ---- */
+  /* Add Student */
   const fName = root.querySelector("#f-name");
   if (fName) {
     fName.oninput = (e) => { state.draft.name = e.target.value; syncSaveStudentButton(); };
@@ -636,12 +673,9 @@ function bindEvents() {
     root.querySelectorAll("[data-set-license]").forEach((el) => {
       el.onclick = () => { state.draft.licenseType = el.getAttribute("data-set-license"); render(); refocus("#f-name"); };
     });
-    const fHours = root.querySelector("#f-hours");
-    fHours.oninput = (e) => { state.draft.totalHoursPlanned = Number(e.target.value) || 0; };
-    const fFee = root.querySelector("#f-fee");
-    if (fFee) fFee.oninput = (e) => { state.draft.courseFee = Number(e.target.value) || 0; };
-    const fStart = root.querySelector("#f-start");
-    fStart.oninput = (e) => { state.draft.startDate = e.target.value; };
+    root.querySelector("#f-hours").oninput = (e) => { state.draft.totalHoursPlanned = Number(e.target.value) || 0; };
+    root.querySelector("#f-fee").oninput = (e) => { state.draft.courseFee = Number(e.target.value) || 0; };
+    root.querySelector("#f-start").oninput = (e) => { state.draft.startDate = e.target.value; };
     root.querySelector("#btn-cancel-student").onclick = () => goto({ name: "list" });
     root.querySelector("#btn-save-student").onclick = () => {
       const d = state.draft;
@@ -653,7 +687,7 @@ function bindEvents() {
     };
   }
 
-  /* ---- add lesson form ---- */
+  /* Add Lesson */
   const fDate = root.querySelector("#f-date");
   if (fDate) {
     fDate.oninput = (e) => { state.draft.date = e.target.value; };
@@ -682,7 +716,7 @@ function bindEvents() {
     };
   }
 
-  /* ---- add payment form ---- */
+  /* Add Payment */
   const pAmount = root.querySelector("#p-amount");
   if (pAmount) {
     pAmount.oninput = e => { state.draft.amount = Number(e.target.value)||0; };
@@ -697,7 +731,7 @@ function bindEvents() {
     };
   }
 
-  /* ---- add expense form ---- */
+  /* Add Expense */
   const eAmount = root.querySelector("#e-amount");
   if (eAmount) {
     eAmount.oninput=e=>{state.draft.amount=Number(e.target.value)||0;};
