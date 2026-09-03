@@ -41,7 +41,7 @@
   #root { min-height: 100vh; }
   .phone { width: 100%; max-width: 480px; margin: 0 auto; background: var(--paper); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
   
-  .topbar {background: var(--asphalt);
+  .topbar { background: var(--asphalt);
   padding-top: calc(12px + env(safe-area-inset-top, 24px)); 
   padding-bottom: 14px;
   padding-left: 14px;
@@ -71,7 +71,8 @@
   .empty { padding: 20px 4px; text-align: center; }
   .empty-title { font-size: 20px; color: var(--ink); margin-bottom: 6px; }
   .empty-body { font-size: 14px; color: var(--muted); line-height: 1.5; }
-  .student-card { display: flex; align-items: center; gap: 12px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-align: left; width: 100%; margin-bottom: 10px; cursor: pointer; }
+  .student-card { display: flex; flex-direction: column; gap: 10px; background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; text-align: left; width: 100%; margin-bottom: 10px; cursor: pointer; }
+  .student-card-main { display: flex; align-items: center; gap: 12px; width: 100%; }
   .student-icon { width: 36px; height: 36px; border-radius: 8px; background: var(--paper); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
   .student-name { font-size: 18px; color: var(--ink); }
   .student-meta { font-size: 12.5px; color: var(--muted); margin: 2px 0 8px; }
@@ -79,6 +80,8 @@
   .action-btn { width: 36px; height: 36px; border-radius: 8px; border: 1px solid var(--line); background: var(--paper); display: flex; align-items: center; justify-content: center; color: var(--asphalt); text-decoration: none; transition: background 0.15s; }
   .action-btn:hover { background: #e2e5e8; }
   .back-nav-btn { display: flex; align-items: center; gap: 8px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 10px 14px; font-weight: 600; font-size: 14px; color: var(--ink); margin-bottom: 12px; width: 100%; }
+  
+  .welcome-btn { width: 100%; background: rgba(47,143,91,0.08); border: 1px solid rgba(47,143,91,0.35); border-radius: 8px; padding: 8px 10px; display: flex; align-items: center; justify-content: center; font-size: 12.5px; font-weight: 600; color: var(--go-green); gap: 6px; }
   
   .progress-track { position: relative; height: 6px; border-radius: 3px; background: var(--line); overflow: hidden; }
   .progress-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--road-yellow); border-radius: 3px; transition: width 0.3s ease; }
@@ -89,7 +92,7 @@
   .hours-row { display: flex; align-items: baseline; gap: 6px; margin-bottom: 8px; }
   .hours-big { font-size: 34px; color: var(--ink); line-height: 1; }
   .hours-small { font-size: 14px; color: var(--muted); }
-  .summary-btn { margin-top: 14px; width: 100%; background: rgba(47,143,91,0.08); border: 1px solid rgba(47,143,91,0.35); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 600; color: var(--go-green); }
+  .summary-btn { margin-top: 10px; width: 100%; background: rgba(47,143,91,0.08); border: 1px solid rgba(47,143,91,0.35); border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; justify-content: center; font-size: 13.5px; font-weight: 600; color: var(--go-green); }
   .section-label { font-size: 16px; color: var(--ink); margin: 14px 2px 8px; }
   .timeline-row { display: flex; gap: 10px; }
   .timeline-marker-col { display: flex; flex-direction: column; align-items: center; width: 16px; padding-top: 18px; }
@@ -118,7 +121,7 @@
   .secondary-btn { background: var(--card); border: 1px solid var(--line); color: var(--ink); }
   .primary-btn { background: var(--road-yellow); font-weight: 700; color: var(--asphalt); }
   .primary-btn:disabled { opacity: 0.5; }
-  .toast { position: fixed; bottom: 12px; left: 12px; right: 12px; max-width: 456px; margin: 0 auto; background: var(--stop-red); color: white; padding: 10px 14px; border-radius: 10px; font-size: 13px; }
+  .toast { position: fixed; bottom: 12px; left: 12px; right: 12px; max-width: 456px; margin: 0 auto; background: var(--stop-red); color: white; padding: 10px 14px; border-radius: 10px; font-size: 13px; z-index: 100; }
 
   .dashboard { padding: 14px 16px 0; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; }
@@ -289,6 +292,41 @@ function openWhatsApp(phone, text) {
   const p = digitsOnly(phone);
   window.open("https://wa.me/" + p + "?text=" + encodeURIComponent(text), "_blank");
 }
+
+function welcomeMessage(student) {
+  const lic = licenseInfo(student.licenseType).label;
+  return [
+    "Dear " + student.name + ",",
+    "Welcome! We are excited to guide you on your journey to becoming a safe and confident driver. Before we begin, please review our core terms and conditions below:",
+    "",
+    "📋 COURSE TERMS & CONDITIONS SUMMARY",
+    "Lesson & Schedule: Lessons are scheduled by mutual agreement. Please arrive on time at the agreed pickup point.",
+    "",
+    "Payment Terms:",
+    "• 60% due on Day 1 (after the first session).",
+    "• 40% due at the midpoint of the course.",
+    "• Note: If you discontinue or leave the course at or after the midpoint (e.g., Day 5 of a 10-day course), full course fees remain payable. Completed lessons are non-refundable.",
+    "",
+    "Cancellation & Rescheduling: Advance notice is required to cancel or reschedule. Last-minute cancellations or absences may count as a completed lesson. Rescheduling depends on trainer availability and weather/road conditions.",
+    "",
+    "Student Responsibilities: Always follow trainer safety instructions, carry your Learner’s License, wear proper footwear, and never use phones or drive under the influence.",
+    "",
+    "Safety First: Safety is our top priority. Lessons do not guarantee passing the official driving test, which depends on individual practice and compliance.",
+    "",
+    "Personal Belongings: You are responsible for your personal items during training sessions.",
+    "",
+    "✍️ HOW TO ACKNOWLEDGE & CONFIRM:",
+    "To confirm your enrollment, please copy, fill in your details, and reply to this message with the template below:",
+    "I have read, understood, and agree to the Driving Lessons Terms & Conditions above.",
+    "",
+    "• Student Full Name: " + student.name,
+    "• Mobile Number: " + student.phone,
+    "• Course / Package: " + lic,
+    "• Date: " + formatDate(todayISO()),
+    "• Confirmation Status: AGREE"
+  ].join("\n");
+}
+
 function lessonMessage(student, lesson) {
   const lines = [
     "Hi " + student.name + ", here's your driving lesson update for " + formatDate(lesson.date) + ":",
@@ -301,6 +339,7 @@ function lessonMessage(student, lesson) {
   lines.push("", "Total so far: " + hoursCompleted(student.id).toFixed(1) + " / " + student.totalHoursPlanned + " hrs", "Keep practicing!");
   return lines.join("\n");
 }
+
 function summaryMessage(student) {
   const entries = state.lessonsByStudent[student.id] || [];
   const done = hoursCompleted(student.id);
@@ -376,19 +415,55 @@ function reportHtml() {
 }
 
 function exportData() {
-  const data={version:3,exportedAt:new Date().toISOString(),students:state.students,lessons:{},payments:{},expenses:state.expenses};
-  state.students.forEach(s=>{data.lessons[s.id]=state.lessonsByStudent[s.id]||[];data.payments[s.id]=state.paymentsByStudent[s.id]||[];});
-  const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
-  const a=document.createElement("a"); a.href=URL.createObjectURL(blob); a.download="drivelog-backup-"+todayISO()+".json"; a.click(); URL.revokeObjectURL(a.href);
+  try {
+    const data = {
+      version: 3,
+      exportedAt: new Date().toISOString(),
+      students: state.students,
+      lessons: state.lessonsByStudent,
+      payments: state.paymentsByStudent,
+      expenses: state.expenses
+    };
+    const jsonStr = JSON.stringify(data, null, 2);
+    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonStr);
+    const a = document.createElement("a");
+    a.href = dataUri;
+    a.download = "drivelog-backup-" + todayISO() + ".json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  } catch (err) {
+    showError("Export failed: " + err.message);
+  }
 }
+
 function importData() {
-  const input=document.createElement("input"); input.type="file"; input.accept=".json,application/json";
-  input.onchange=async()=>{const f=input.files&&input.files[0]; if(!f)return; try{
-    const data=JSON.parse(await f.text()); if(!Array.isArray(data.students)) throw new Error("Invalid backup");
-    state.students=data.students; state.lessonsByStudent={}; state.paymentsByStudent={};
-    state.students.forEach(s=>{state.lessonsByStudent[s.id]=data.lessons?.[s.id]||[];state.paymentsByStudent[s.id]=data.payments?.[s.id]||[];storageSet("lessons:"+s.id,state.lessonsByStudent[s.id]);storageSet("payments:"+s.id,state.paymentsByStudent[s.id]);}); state.expenses=Array.isArray(data.expenses)?data.expenses:[]; storageSet("expenses",state.expenses);
-    storageSet("students",state.students); goto({name:"list"});
-  }catch(e){showError("Invalid backup file.");}};
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = ".json,application/json";
+  input.onchange = async () => {
+    const f = input.files && input.files[0];
+    if (!f) return;
+    try {
+      const data = JSON.parse(await f.text());
+      if (!Array.isArray(data.students)) throw new Error("Invalid structure");
+      state.students = data.students;
+      state.lessonsByStudent = data.lessons || {};
+      state.paymentsByStudent = data.payments || {};
+      state.expenses = Array.isArray(data.expenses) ? data.expenses : [];
+
+      storageSet("students", state.students);
+      storageSet("expenses", state.expenses);
+      state.students.forEach(s => {
+        storageSet("lessons:" + s.id, state.lessonsByStudent[s.id] || []);
+        storageSet("payments:" + s.id, state.paymentsByStudent[s.id] || []);
+      });
+
+      goto({ name: "list" });
+    } catch (e) {
+      showError("Invalid backup JSON file.");
+    }
+  };
   input.click();
 }
 
@@ -425,16 +500,19 @@ function studentListHtml() {
     const li = licenseInfo(s.licenseType);
     const pending = balanceFor(s);
     return '<div class="student-card" data-open="' + s.id + '">' +
-      '<div class="student-icon">' + ICONS[li.icon](18, "var(--asphalt)") + '</div>' +
-      '<div style="flex:1;text-align:left">' +
-        '<div class="student-name display">' + escapeHtml(s.name) + '</div>' +
-        '<div class="student-meta">' + count + ' lesson' + (count === 1 ? '' : 's') + ' · ' + done.toFixed(1) + '/' + s.totalHoursPlanned + ' hrs' + (pending > 0 ? ' · <span class="red">Bal: ' + money(pending) + '</span>' : '') + '</div>' +
-        progressBarHtml(done, s.totalHoursPlanned) +
+      '<div class="student-card-main">' +
+        '<div class="student-icon">' + ICONS[li.icon](18, "var(--asphalt)") + '</div>' +
+        '<div style="flex:1;text-align:left">' +
+          '<div class="student-name display">' + escapeHtml(s.name) + '</div>' +
+          '<div class="student-meta">' + count + ' lesson' + (count === 1 ? '' : 's') + ' · ' + done.toFixed(1) + '/' + s.totalHoursPlanned + ' hrs' + (pending > 0 ? ' · <span class="red">Bal: ' + money(pending) + '</span>' : '') + '</div>' +
+          progressBarHtml(done, s.totalHoursPlanned) +
+        '</div>' +
+        '<div class="student-actions">' +
+          '<a class="action-btn" href="tel:' + digitsOnly(s.phone) + '" title="Call Student" onclick="event.stopPropagation()">' + ICONS.phone(16, "var(--asphalt)") + '</a>' +
+          '<button class="action-btn" data-card-wa="' + s.id + '" title="WhatsApp Progress" onclick="event.stopPropagation()">' + ICONS.chat(16, "var(--go-green)") + '</button>' +
+        '</div>' +
       '</div>' +
-      '<div class="student-actions">' +
-        '<a class="action-btn" href="tel:' + digitsOnly(s.phone) + '" title="Call Student" onclick="event.stopPropagation()">' + ICONS.phone(16, "var(--asphalt)") + '</a>' +
-        '<button class="action-btn" data-card-wa="' + s.id + '" title="WhatsApp" onclick="event.stopPropagation()">' + ICONS.chat(16, "var(--go-green)") + '</button>' +
-      '</div>' +
+      '<button class="welcome-btn" data-welcome-wa="' + s.id + '" onclick="event.stopPropagation()">' + ICONS.chat(14, "var(--go-green)") + ' Send Welcome T&amp;C</button>' +
     '</div>';
   }).join("");
   return cards + '<button class="fab" id="btn-add-student">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">New student</span></button>';
@@ -481,10 +559,10 @@ function studentDetailHtml(s) {
       '<div class="detail-meta-row"><span>' + li.label + '</span><span>· Started ' + formatDate(s.startDate) + '</span></div>' +
       '<div class="hours-row"><span class="hours-big display">' + done.toFixed(1) + '</span><span class="hours-small">/ ' + s.totalHoursPlanned + ' hrs</span></div>' +
       progressBarHtml(done, s.totalHoursPlanned) +
+      '<button class="summary-btn" id="btn-share-welcome" style="margin-top:14px; background: rgba(245,183,0,0.15); border-color: var(--road-yellow); color: var(--asphalt);">' + ICONS.chat(16, "var(--asphalt)") + '<span style="margin-left:8px">Send Welcome T&amp;C</span></button>' +
       '<button class="summary-btn" id="btn-share-summary">' + ICONS.chat(16, "var(--go-green)") + '<span style="margin-left:8px">Send progress summary on WhatsApp</span></button>' +
     '</div>' +
 
-    /* PAYMENT SUMMARY & ADD PAYMENT BUTTON */
     '<div class="payment-box">' +
       '<div class="payment-summary-row">' +
         '<div><div class="stat-label">COURSE FEE</div><div class="pay-stat-val">' + money(fee) + '</div></div>' +
@@ -671,6 +749,15 @@ function bindEvents() {
     };
   });
 
+  root.querySelectorAll("[data-welcome-wa]").forEach((el) => {
+    el.onclick = (e) => {
+      e.stopPropagation();
+      const sid = el.getAttribute("data-welcome-wa");
+      const s = state.students.find(st => st.id === sid);
+      if (s) openWhatsApp(s.phone, welcomeMessage(s));
+    };
+  });
+
   const exportBtn = root.querySelector("#btn-export");
   if (exportBtn) exportBtn.onclick = exportData;
   const importBtn = root.querySelector("#btn-import");
@@ -687,6 +774,12 @@ function bindEvents() {
 
   const addLessonBtn = root.querySelector("#btn-add-lesson");
   if (addLessonBtn) addLessonBtn.onclick = () => goto({ name: "addLesson", studentId: activeStudent().id });
+
+  const shareWelcomeBtn = root.querySelector("#btn-share-welcome");
+  if (shareWelcomeBtn) shareWelcomeBtn.onclick = () => {
+    const s = activeStudent();
+    openWhatsApp(s.phone, welcomeMessage(s));
+  };
 
   const shareSummaryBtn = root.querySelector("#btn-share-summary");
   if (shareSummaryBtn) shareSummaryBtn.onclick = () => {
@@ -797,9 +890,23 @@ function refocus(sel) {
 
 render();
 
+// Service Worker handling for dynamic updates without requiring uninstall
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("service-worker.js").catch(() => {});
+    navigator.serviceWorker.register("service-worker.js").then((reg) => {
+      // Periodically check for updates
+      reg.addEventListener("updatefound", () => {
+        const installingWorker = reg.installing;
+        if (installingWorker) {
+          installingWorker.onstatechange = () => {
+            if (installingWorker.state === "installed" && navigator.serviceWorker.controller) {
+              // Automatically reload to apply update without uninstalling
+              window.location.reload();
+            }
+          };
+        }
+      });
+    }).catch(() => {});
   });
 }
 </script>
