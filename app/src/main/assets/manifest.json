@@ -1,5 +1,6 @@
 {
-  "name": "DRIVING LESSONS \u2014 Training Manager",
+  "version": "1.0.1",
+  "name": "DRIVING LESSONS — Training Manager",
   "short_name": "DRIVING LESSONS",
   "description": "Driving student, lesson, payment, income and expense manager.",
   "start_url": "./index.html",
