@@ -2,6 +2,7 @@ package com.drivinglessons.drivelog;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Insets;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -41,8 +42,21 @@ public class MainActivity extends Activity {
         setContentView(webView);
 
         // ---------------------------------------------------------
-        // 1. SAFE AREA / STATUS BAR
+        // 1. SAFE AREA / STATUS BAR (FIXED)
         // ---------------------------------------------------------
+        // Android 15 (SDK 35) enforces edge-to-edge drawing, so the
+        // WebView is laid out full-screen behind the status bar and
+        // camera cutout no matter what. We must explicitly:
+        //   a) tell the window not to reserve space itself (API 30+)
+        //   b) read back the *real* inset (status bar + cutout) and
+        //      pad the WebView ourselves
+        //   c) force an inset pass immediately, in case the system
+        //      already delivered insets before this listener was set
+        // ---------------------------------------------------------
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            getWindow().setDecorFitsSystemWindows(false);
+        }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
 
             webView.setOnApplyWindowInsetsListener(
@@ -53,19 +67,42 @@ public class MainActivity extends Activity {
                                 View v,
                                 WindowInsets insets) {
 
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                                v.setPadding(
-                                        0,
-                                        insets.getSystemWindowInsetTop(),
-                                        0,
-                                        0
+                            int top = 0;
+                            int bottom = 0;
+
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+
+                                Insets bars = insets.getInsets(
+                                        WindowInsets.Type.systemBars()
+                                                | WindowInsets.Type.displayCutout()
                                 );
+
+                                top = bars.top;
+                                bottom = bars.bottom;
+
+                            } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+
+                                top = insets.getSystemWindowInsetTop();
+                                bottom = insets.getSystemWindowInsetBottom();
                             }
+
+                            v.setPadding(0, top, 0, bottom);
 
                             return insets;
                         }
                     }
             );
+
+            // Insets may already have been delivered before the listener
+            // above was attached (common right after setContentView).
+            // Explicitly request a fresh pass so padding is applied
+            // immediately instead of only after the next resize/rotate.
+            webView.post(new Runnable() {
+                @Override
+                public void run() {
+                    webView.requestApplyInsets();
+                }
+            });
         }
 
         // ---------------------------------------------------------
