@@ -424,19 +424,26 @@ function exportData() {
       payments: state.paymentsByStudent,
       expenses: state.expenses
     };
+    
     const jsonStr = JSON.stringify(data, null, 2);
-    const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(jsonStr);
+    
+    // Create a Blob object instead of a raw data URI string
+    const blob = new Blob([jsonStr], { type: "application/json" });
+    const blobUrl = URL.createObjectURL(blob);
+    
     const a = document.createElement("a");
-    a.href = dataUri;
+    a.href = blobUrl;
     a.download = "drivelog-backup-" + todayISO() + ".json";
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
+    
+    // Clean up memory
+    setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
   } catch (err) {
     showError("Export failed: " + err.message);
   }
 }
-
 function importData() {
   const input = document.createElement("input");
   input.type = "file";
