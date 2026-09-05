@@ -12,7 +12,7 @@ android {
         targetSdk 35
 
         // IMPORTANT FOR APK UPDATE
-        versionCode 2
-        versionName '1.1'
+        versionCode 3
+        versionName '1.2'
     }
 }
