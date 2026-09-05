@@ -1,8 +1,18 @@
-defaultConfig {
-    applicationId 'com.drivinglessons.drivelog'
-    minSdk 23
-    targetSdk 35
+plugins {
+    id 'com.android.application'
+}
 
-    versionCode 2
-    versionName '1.1'
+android {
+    namespace 'com.drivinglessons.drivelog'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.drivinglessons.drivelog'
+        minSdk 23
+        targetSdk 35
+
+        // IMPORTANT FOR APK UPDATE
+        versionCode 2
+        versionName '1.1'
+    }
 }
