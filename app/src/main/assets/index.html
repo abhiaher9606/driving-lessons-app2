@@ -415,56 +415,101 @@ function reportHtml() {
 }
 
 async function exportData() {
-  try {
-    const data = {
-      version: 4,
-      exportedAt: new Date().toISOString(),
-      students: Array.isArray(state.students) ? state.students : [],
-      lessons: state.lessonsByStudent || {},
-      payments: state.paymentsByStudent || {},
-      expenses: Array.isArray(state.expenses) ? state.expenses : []
-    };
+    try {
+        const data = {
+            version: 3,
+            exportedAt: new Date().toISOString(),
+            students: state.students,
+            lessons: state.lessonsByStudent,
+            payments: state.paymentsByStudent,
+            expenses: state.expenses
+        };
 
-    const jsonStr = JSON.stringify(data, null, 2);
-    const fileName = "drivelog-backup-" + todayISO() + ".json";
-    const blob = new Blob([jsonStr], { type: "application/json" });
+        const json = JSON.stringify(data, null, 2);
 
-    // Android WebView: use the native Share sheet when available.
-    // This avoids unsupported data: URI downloads.
-    if (navigator.share && typeof File !== "undefined") {
-      try {
-        const file = new File([blob], fileName, { type: "application/json" });
-        if (!navigator.canShare || navigator.canShare({ files: [file] })) {
-          await navigator.share({
-            title: "DriveLog Backup",
-            text: "DriveLog backup file",
-            files: [file]
-          });
-          return;
+        const fileName =
+            "driving_lessons_backup_" +
+            new Date().toISOString().slice(0, 10) +
+            ".json";
+
+        // =====================================================
+        // ANDROID APP
+        // =====================================================
+        if (
+            window.Android &&
+            typeof window.Android.saveBackup === "function"
+        ) {
+            window.Android.saveBackup(fileName, json);
+
+            return;
         }
-      } catch (shareErr) {
-        if (shareErr && shareErr.name === "AbortError") return;
-      }
+
+        // =====================================================
+        // NORMAL WEB BROWSER
+        // =====================================================
+
+        const blob = new Blob(
+            [json],
+            { type: "application/json" }
+        );
+
+        // Web Share API
+        if (
+            navigator.share &&
+            navigator.canShare
+        ) {
+
+            const file = new File(
+                [blob],
+                fileName,
+                { type: "application/json" }
+            );
+
+            if (
+                navigator.canShare({
+                    files: [file]
+                })
+            ) {
+
+                await navigator.share({
+                    title: "Driving Lessons Backup",
+                    text: "Driving Lessons app backup",
+                    files: [file]
+                });
+
+                return;
+            }
+        }
+
+        // Browser fallback
+        const url = URL.createObjectURL(blob);
+
+        const a = document.createElement("a");
+
+        a.href = url;
+        a.download = fileName;
+
+        document.body.appendChild(a);
+
+        a.click();
+
+        a.remove();
+
+        setTimeout(() => {
+            URL.revokeObjectURL(url);
+        }, 1000);
+
+    } catch (error) {
+
+        console.error("Backup error:", error);
+
+        alert(
+            "Backup failed: " +
+            (error.message || error)
+        );
     }
-
-    // Browser fallback: Blob URL (NOT data: URI).
-    const blobUrl = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = blobUrl;
-    a.download = fileName;
-    a.style.display = "none";
-    document.body.appendChild(a);
-    a.click();
-
-    setTimeout(() => {
-      try { document.body.removeChild(a); } catch (e) {}
-      URL.revokeObjectURL(blobUrl);
-    }, 5000);
-  } catch (err) {
-    showError("Backup failed: " + (err && err.message ? err.message : "Unable to create backup"));
-  }
 }
-function importData() {
+  function importData() {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "application/json,.json,text/json";
