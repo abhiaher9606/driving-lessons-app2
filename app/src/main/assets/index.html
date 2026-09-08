@@ -139,8 +139,8 @@
   .payment-top { display:flex; justify-content:space-between; gap:8px; }
   .payment-amount { font-size:16px; font-weight:700; }
   .payment-meta { font-size:12.5px; color:var(--muted); margin-top:2px; }
-  .quick-row { display:flex; gap:8px; padding:12px 16px 0; }
-  .quick-btn { flex:1; border:1px solid var(--line); background:var(--card); border-radius:10px; padding:10px 6px; font-weight:600; color:var(--ink); }
+  .quick-row { display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px 0; }
+  .quick-btn { flex:1; min-width: 30%; border:1px solid var(--line); background:var(--card); border-radius:10px; padding:10px 6px; font-weight:600; color:var(--ink); font-size:12px; }
   @media(max-width:360px){.dashboard{grid-template-columns:1fr}.quick-row{flex-direction:column}}
 
   .report-wrap { padding:14px 16px 24px; }
@@ -344,6 +344,19 @@ function summaryMessage(student) {
   const entries = state.lessonsByStudent[student.id] || [];
   const done = hoursCompleted(student.id);
   const lastDate = entries[0] ? formatDate(entries[0].date) : "—";
+  const reviewLink = "https://g.page/r/CaSe5_SXtzHLEBM/review";
+  const isFinished = done >= student.totalHoursPlanned;
+
+  if (isFinished) {
+    return [
+      "Dear " + student.name + ",",
+      "",
+      "Thank you for learning with DRIVING LESSONS. If you enjoyed the training, please share your experience with a Google review. Your feedback helps other learners choose a trusted driving trainer. Thank you for your support.",
+      "",
+      " Leave your review here: " + reviewLink
+    ].join("\n");
+  }
+
   return [
     "Hi " + student.name + ", your driving training progress so far:",
     "",
@@ -432,33 +445,23 @@ async function exportData() {
             new Date().toISOString().slice(0, 10) +
             ".json";
 
-        // =====================================================
-        // ANDROID APP
-        // =====================================================
         if (
             window.Android &&
             typeof window.Android.saveBackup === "function"
         ) {
             window.Android.saveBackup(fileName, json);
-
             return;
         }
-
-        // =====================================================
-        // NORMAL WEB BROWSER
-        // =====================================================
 
         const blob = new Blob(
             [json],
             { type: "application/json" }
         );
 
-        // Web Share API
         if (
             navigator.share &&
             navigator.canShare
         ) {
-
             const file = new File(
                 [blob],
                 fileName,
@@ -470,29 +473,21 @@ async function exportData() {
                     files: [file]
                 })
             ) {
-
                 await navigator.share({
                     title: "Driving Lessons Backup",
                     text: "Driving Lessons app backup",
                     files: [file]
                 });
-
                 return;
             }
         }
 
-        // Browser fallback
         const url = URL.createObjectURL(blob);
-
         const a = document.createElement("a");
-
         a.href = url;
         a.download = fileName;
-
         document.body.appendChild(a);
-
         a.click();
-
         a.remove();
 
         setTimeout(() => {
@@ -500,16 +495,15 @@ async function exportData() {
         }, 1000);
 
     } catch (error) {
-
         console.error("Backup error:", error);
-
         alert(
             "Backup failed: " +
             (error.message || error)
         );
     }
 }
-  function importData() {
+
+function importData() {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "application/json,.json,text/json";
@@ -539,6 +533,48 @@ async function exportData() {
       try { document.body.removeChild(input); } catch (x) {}
     }
   };
+  document.body.appendChild(input);
+  input.click();
+}
+
+function broadcastAttachment() {
+  if (!state.students.length) return showError("No students available to broadcast.");
+  
+  const input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*,application/pdf";
+  input.style.display = "none";
+  
+  input.onchange = async () => {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const msg = prompt("Optional caption / message to send with attachment to ALL students:", "Dear Student, please find the attached document from Driving Lessons.");
+    
+    if (msg === null) return;
+
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try {
+        await navigator.share({
+          files: [file],
+          title: "Driving Lessons Attachment",
+          text: msg
+        });
+        return;
+      } catch (err) {
+        console.log("Native share cancelled/failed, falling back to sequential WhatsApp sending.");
+      }
+    }
+
+    alert("File selected: " + file.name + "\n\nWhatsApp will now open sequentially for each student. Paste or attach your file directly into each opened chat.");
+    
+    state.students.forEach((s, idx) => {
+      setTimeout(() => {
+        openWhatsApp(s.phone, msg + " (Attached: " + file.name + ")");
+      }, idx * 1500);
+    });
+  };
+
   document.body.appendChild(input);
   input.click();
 }
@@ -636,7 +672,7 @@ function studentDetailHtml(s) {
       '<div class="hours-row"><span class="hours-big display">' + done.toFixed(1) + '</span><span class="hours-small">/ ' + s.totalHoursPlanned + ' hrs</span></div>' +
       progressBarHtml(done, s.totalHoursPlanned) +
       '<button class="summary-btn" id="btn-share-welcome" style="margin-top:14px; background: rgba(245,183,0,0.15); border-color: var(--road-yellow); color: var(--asphalt);">' + ICONS.chat(16, "var(--asphalt)") + '<span style="margin-left:8px">Send Welcome T&amp;C</span></button>' +
-      '<button class="summary-btn" id="btn-share-summary">' + ICONS.chat(16, "var(--go-green)") + '<span style="margin-left:8px">Send progress summary on WhatsApp</span></button>' +
+      '<button class="summary-btn" id="btn-share-summary">' + ICONS.chat(16, "var(--go-green)") + '<span style="margin-left:8px">' + (done >= s.totalHoursPlanned ? 'Send Thank You & Review Request' : 'Send progress summary on WhatsApp') + '</span></button>' +
     '</div>' +
 
     '<div class="payment-box">' +
@@ -767,7 +803,12 @@ function render() {
 
   if (v.name === "list") {
     bodyHtml = dashboardHtml() +
-      '<div class="quick-row"><button class="quick-btn" id="btn-reports">📊 Reports</button><button class="quick-btn" id="btn-export">⬇ Backup</button><button class="quick-btn" id="btn-import">⬆ Restore</button></div>' +
+      '<div class="quick-row">' +
+        '<button class="quick-btn" id="btn-reports">📊 Reports</button>' +
+        '<button class="quick-btn" id="btn-broadcast">📢 Broadcast File</button>' +
+        '<button class="quick-btn" id="btn-export">⬇ Backup</button>' +
+        '<button class="quick-btn" id="btn-import">⬆ Restore</button>' +
+      '</div>' +
       studentListHtml();
   } else if (v.name === "addStudent") {
     wrapClass = "form-wrap";
@@ -838,6 +879,8 @@ function bindEvents() {
   if (exportBtn) exportBtn.onclick = exportData;
   const importBtn = root.querySelector("#btn-import");
   if (importBtn) importBtn.onclick = importData;
+  const broadcastBtn = root.querySelector("#btn-broadcast");
+  if (broadcastBtn) broadcastBtn.onclick = broadcastAttachment;
   const reportsBtn = root.querySelector("#btn-reports");
   if (reportsBtn) reportsBtn.onclick = () => goto({name:"reports"});
   const reportMonth = root.querySelector("#report-month");
@@ -970,13 +1013,11 @@ render();
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("service-worker.js").then((reg) => {
-      // Periodically check for updates
       reg.addEventListener("updatefound", () => {
         const installingWorker = reg.installing;
         if (installingWorker) {
           installingWorker.onstatechange = () => {
             if (installingWorker.state === "installed" && navigator.serviceWorker.controller) {
-              // Automatically reload to apply update without uninstalling
               window.location.reload();
             }
           };
