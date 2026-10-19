@@ -30,8 +30,6 @@
     margin: 0; 
     padding: 0; 
     background: var(--paper); 
-    padding-top: env(safe-area-inset-top, 24px);
-    padding-bottom: env(safe-area-inset-bottom, 12px);
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, Arial, sans-serif;
   }
 
@@ -42,7 +40,7 @@
   .phone { width: 100%; max-width: 480px; margin: 0 auto; background: var(--paper); min-height: 100vh; display: flex; flex-direction: column; position: relative; }
   
   .topbar { background: var(--asphalt);
-  padding-top: calc(12px + env(safe-area-inset-top, 24px)); 
+  padding-top: 12px; 
   padding-bottom: 14px;
   padding-left: 14px;
   padding-right: 14px;
@@ -53,19 +51,20 @@
   top: 0; 
   z-index: 5;
   }
-  .topbar-title { flex: 1; text-align: center; color: var(--paper); font-size: 22px; }
+  .topbar-title { flex: 1; min-width: 0; text-align: center; color: var(--paper); font-size: 22px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .badge, .icon-btn { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; border: none; }
   .badge { background: var(--road-yellow); }
-  .icon-btn { width: 40px; 
-  height: 40px; 
-  border-radius: 8px; 
+  .icon-btn { width: 44px; 
+  height: 44px; 
+  border-radius: 10px; 
   display: flex; 
   align-items: center; 
   justify-content: center; 
   border: none;
-  background: transparent;
+  background: rgba(255,255,255,0.14);
   flex-shrink: 0;
   }
+  .top-side { width: 44px; height: 44px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
   .body { flex: 1; overflow-y: auto; }
   .list-wrap { padding: 16px; display: flex; flex-direction: column; gap: 4px; }
   .empty { padding: 20px 4px; text-align: center; }
@@ -121,7 +120,7 @@
   .secondary-btn { background: var(--card); border: 1px solid var(--line); color: var(--ink); }
   .primary-btn { background: var(--road-yellow); font-weight: 700; color: var(--asphalt); }
   .primary-btn:disabled { opacity: 0.5; }
-  .toast { position: fixed; bottom: 12px; left: 12px; right: 12px; max-width: 456px; margin: 0 auto; background: var(--stop-red); color: white; padding: 10px 14px; border-radius: 10px; font-size: 13px; z-index: 100; }
+  .toast { position: fixed; bottom: 84px; left: 12px; right: 12px; max-width: 456px; margin: 0 auto; background: var(--stop-red); color: white; padding: 10px 14px; border-radius: 10px; font-size: 13px; z-index: 100; }
 
   .dashboard { padding: 14px 16px 0; display:grid; grid-template-columns:1fr 1fr; gap:10px; }
   .stat { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:12px; }
@@ -139,8 +138,8 @@
   .payment-top { display:flex; justify-content:space-between; gap:8px; }
   .payment-amount { font-size:16px; font-weight:700; }
   .payment-meta { font-size:12.5px; color:var(--muted); margin-top:2px; }
-  .quick-row { display:flex; flex-wrap:wrap; gap:8px; padding:12px 16px 0; }
-  .quick-btn { flex:1; min-width: 30%; border:1px solid var(--line); background:var(--card); border-radius:10px; padding:10px 6px; font-weight:600; color:var(--ink); font-size:12px; }
+  .quick-row { display:flex; gap:8px; padding:12px 16px 0; }
+  .quick-btn { flex:1; border:1px solid var(--line); background:var(--card); border-radius:10px; padding:10px 6px; font-weight:600; color:var(--ink); }
   @media(max-width:360px){.dashboard{grid-template-columns:1fr}.quick-row{flex-direction:column}}
 
   .report-wrap { padding:14px 16px 24px; }
@@ -156,6 +155,34 @@
   .report-actions { display:flex; gap:8px; margin:10px 0 4px; }
   .report-actions button { flex:1; }
   svg { display: block; }
+
+  /* ---- v1.4 additions ---- */
+  .progress-fill.done { background: var(--go-green); }
+  .section-head { display:flex; align-items:center; justify-content:space-between; font-size:12.5px; font-weight:700; color:var(--muted); letter-spacing:.5px; text-transform:uppercase; margin:12px 2px 8px; }
+  .section-head .count { background:var(--card); border:1px solid var(--line); border-radius:12px; padding:1px 9px; font-size:12px; letter-spacing:0; }
+  .student-card.completed { background:#F4F9F6; border-color:rgba(47,143,91,.35); }
+  .badge-pill { display:inline-block; font-size:10.5px; font-weight:700; border-radius:10px; padding:1px 7px; margin-left:6px; vertical-align:middle; letter-spacing:.3px; }
+  .badge-done { color:var(--go-green); background:rgba(47,143,91,.13); }
+  .badge-new { color:#8a6400; background:rgba(245,183,0,.25); }
+  .card-row { display:flex; gap:8px; width:100%; }
+  .lesson-quick { flex:1; background:var(--road-yellow); border:none; border-radius:8px; padding:8px 10px; display:flex; align-items:center; justify-content:center; gap:6px; font-size:12.5px; font-weight:700; color:var(--asphalt); }
+  .card-row .welcome-btn { width:auto; flex:1; }
+  .bottom-bar { position:fixed; left:0; right:0; bottom:0; max-width:480px; margin:0 auto; z-index:6; background:var(--card); border-top:1px solid var(--line); padding:10px 14px; box-shadow:0 -4px 14px rgba(0,0,0,.08); }
+  .bottom-bar .fab { margin:0; }
+  .tabbar { position:fixed; left:0; right:0; bottom:0; max-width:480px; margin:0 auto; z-index:6; display:flex; background:var(--asphalt); }
+  .tab-btn { flex:1; background:none; border:none; color:#9AA1AB; padding:9px 0 8px; display:flex; flex-direction:column; align-items:center; gap:3px; font-size:12px; font-weight:700; }
+  .tab-btn.active { color:var(--road-yellow); }
+  .spacer { height:84px; }
+  .modal-back { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.55); z-index:50; display:flex; align-items:center; justify-content:center; padding:20px; }
+  .modal { background:var(--card); border-radius:14px; padding:18px; max-width:380px; width:100%; }
+  .danger-btn { flex:1; background:var(--stop-red); color:#fff; border:none; border-radius:10px; padding:12px 0; font-size:14.5px; font-weight:700; }
+  .quick-btn.danger { color:var(--stop-red); border-color:rgba(214,69,69,.45); }
+  .quick-btn.edit { display:flex; align-items:center; justify-content:center; gap:6px; }
+  .pick-btn { width:100%; background:rgba(47,143,91,.08); border:1px dashed rgba(47,143,91,.6); border-radius:10px; padding:11px 12px; font-size:14px; font-weight:700; color:var(--go-green); display:flex; align-items:center; justify-content:center; gap:8px; }
+  .locked-box { text-align:center; }
+  .locked-title { font-size:15px; font-weight:700; color:var(--ink); margin:6px 0 10px; }
+  .fin-row { cursor:pointer; }
+  .complete-chip { display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:700; color:var(--go-green); background:rgba(47,143,91,.12); border-radius:12px; padding:3px 10px; margin-bottom:8px; }
 </style>
 </head>
 <body>
@@ -181,6 +208,11 @@ const ICONS = {
   car: (s, c) => svg('<path d="M5 17h14M5 17a2 2 0 1 1-4 0 2 2 0 0 1 4 0zm14 0a2 2 0 1 0 4 0 2 2 0 0 0-4 0zM3 17V11l2-5h14l2 5v6"/>', s, c),
   bike: (s, c) => svg('<circle cx="5.5" cy="17.5" r="3.5"/><circle cx="18.5" cy="17.5" r="3.5"/><path d="M15 6a1 1 0 100-2 1 1 0 000 2zM12 17.5V14l-3-3 4-3 2 3h2"/>', s, c),
   truck: (s, c) => svg('<rect x="1" y="3" width="15" height="13"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>', s, c),
+  users: (s, c) => svg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', s, c),
+  lock: (s, c) => svg('<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>', s, c),
+  edit: (s, c) => svg('<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>', s, c),
+  trash: (s, c) => svg('<polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>', s, c),
+  contact: (s, c) => svg('<path d="M4 4h14a2 2 0 0 1 2 2v14H6a2 2 0 0 1-2-2V4z"/><circle cx="12" cy="10" r="2.5"/><path d="M7.5 17a4.5 4.5 0 0 1 9 0"/>', s, c),
   wallet: (s, c) => svg('<path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"/><path d="M4 6v12a2 2 0 0 0 2 2h14v-4"/><path d="M18 12a2 2 0 0 0-2 2 2 2 0 0 0 2 2h4v-4h-4z"/>', s, c),
 };
 
@@ -241,6 +273,8 @@ const state = {
   view: { name: "list" },
   error: "",
   draft: {},
+  financeUnlocked: false,
+  confirm: null,
 };
 
 state.students.forEach((s) => { 
@@ -264,7 +298,107 @@ function money(n) { return "₹" + Number(n||0).toLocaleString("en-IN",{maximumF
 
 function showError(msg) { state.error = msg; render(); setTimeout(() => { state.error = ""; render(); }, 3500); }
 
-function goto(view) { state.view = view; state.draft = {}; render(); }
+/* ---------- training status + ordering ---------- */
+function isCompleted(s) {
+  if (s.manualComplete === true) return true;
+  const plan = Number(s.totalHoursPlanned) || 0;
+  return plan > 0 && hoursCompleted(s.id) + 1e-9 >= plan;
+}
+function createdTs(s) {
+  if (s.createdAt) return Number(s.createdAt) || 0;
+  const n = parseInt(String(s.id || "").slice(0, 8), 36);   // ids start with Date.now() in base36
+  return isNaN(n) ? 0 : n;
+}
+function lastActivityKey(s) {
+  const ds = (state.lessonsByStudent[s.id] || []).map((l) => String(l.date || ""));
+  ds.sort();
+  return ds.length ? ds[ds.length - 1] : String(s.startDate || "");
+}
+function sortedStudents() {
+  const active = [], finished = [];
+  state.students.forEach((s) => (isCompleted(s) ? finished : active).push(s));
+  active.sort((a, b) => createdTs(b) - createdTs(a));                       // newest / still training first
+  finished.sort((a, b) => lastActivityKey(b).localeCompare(lastActivityKey(a)) || createdTs(b) - createdTs(a));
+  return { active: active, finished: finished };
+}
+
+/* ---------- native (Android) bridge helpers ---------- */
+function nativeHas(fn) { return !!(window.Android && typeof window.Android[fn] === "function"); }
+let authCb = null;
+function requireAuth(cb) {
+  if (state.financeUnlocked) { cb(); return; }
+  if (!nativeHas("authenticate")) { state.financeUnlocked = true; cb(); return; }   // plain browser: no lock available
+  authCb = cb;
+  window.Android.authenticate();
+}
+window.__authResult = function (ok) {
+  const cb = authCb; authCb = null;
+  if (ok) { state.financeUnlocked = true; if (cb) cb(); }
+  else showError("Not unlocked.");
+};
+window.__onAppLocked = function () {
+  state.financeUnlocked = false;
+  authCb = null;
+  const n = state.view.name;
+  if (n === "finance" || n === "reports" || n === "addExpense" || n === "addPayment") goto({ name: "list" });
+  else render();
+};
+function normalizePhone(raw) {
+  const p = String(raw || "").trim();
+  const plus = p.charAt(0) === "+";
+  const d = p.replace(/[^\d]/g, "");
+  if (!d) return "+91";
+  if (plus) return "+" + d;
+  if (d.indexOf("00") === 0) return "+" + d.slice(2);
+  if (d.length === 10) return "+91" + d;
+  if (d.length === 11 && d.charAt(0) === "0") return "+91" + d.slice(1);
+  if (d.length === 12 && d.indexOf("91") === 0) return "+" + d;
+  return d;
+}
+window.__contactPicked = function (name, number) {
+  const n = state.view.name;
+  if (n !== "addStudent" && n !== "editStudent") return;
+  if (name) state.draft.name = name;
+  if (number) state.draft.phone = normalizePhone(number);
+  render();
+};
+
+/* ---------- navigation ---------- */
+function backTarget() {
+  const v = state.view, sid = v.studentId;
+  switch (v.name) {
+    case "addStudent": return { name: "list" };
+    case "editStudent": return { name: "detail", studentId: sid, from: v.from };
+    case "detail": return v.from === "finance" ? { name: "finance" } : { name: "list" };
+    case "addLesson":
+    case "addPayment": return v.origin === "list" ? { name: "list" } : { name: "detail", studentId: sid, from: v.from };
+    case "finance": return { name: "list" };
+    case "reports": return { name: "finance" };
+    case "addExpense": return { name: "reports" };
+    default: return null;
+  }
+}
+function backLabel(t) {
+  return t.name === "list" ? "Back to Students"
+    : t.name === "detail" ? "Back to student"
+    : t.name === "finance" ? "Back to Finance"
+    : t.name === "reports" ? "Back to Reports" : "Back";
+}
+function goBack() {
+  if (state.confirm) { state.confirm = null; render(); return true; }
+  const t = backTarget();
+  if (!t) return false;
+  goto(t);
+  return true;
+}
+window.__nativeBack = goBack;      // called by Android's back button / gesture
+
+function goto(view) {
+  if (view.name === "list") state.financeUnlocked = false;    // leaving finance areas hides money again
+  state.view = view; state.draft = {}; state.confirm = null;
+  render();
+  try { window.scrollTo(0, 0); } catch (e) {}
+}
 
 function addStudent(student) {
   state.students.push(student);
@@ -273,19 +407,34 @@ function addStudent(student) {
   if (!storageSet("students", state.students)) showError("Couldn't save student.");
   goto({ name: "detail", studentId: student.id });
 }
+function updateStudent(id, fields) {
+  const s = state.students.find((x) => x.id === id);
+  if (!s) return goto({ name: "list" });
+  Object.assign(s, fields);
+  if (!storageSet("students", state.students)) showError("Couldn't save changes.");
+  goto({ name: "detail", studentId: id, from: state.view.from });
+}
+function deleteStudent(id) {
+  state.students = state.students.filter((s) => s.id !== id);
+  delete state.lessonsByStudent[id];
+  delete state.paymentsByStudent[id];
+  try { localStorage.removeItem("lessons:" + id); localStorage.removeItem("payments:" + id); } catch (e) {}
+  storageSet("students", state.students);
+  goto({ name: "list" });
+}
 function addLesson(studentId, lesson) {
   const list = state.lessonsByStudent[studentId] || [];
   list.unshift(lesson);
   state.lessonsByStudent[studentId] = list;
   if (!storageSet("lessons:" + studentId, list)) showError("Couldn't save lesson.");
-  goto({ name: "detail", studentId });
+  goto(backTarget());
 }
 function addPayment(studentId, payment) {
   const list = state.paymentsByStudent[studentId] || [];
   list.unshift(payment);
   state.paymentsByStudent[studentId] = list;
   if (!storageSet("payments:" + studentId, list)) showError("Couldn't save payment.");
-  goto({ name: "detail", studentId });
+  goto(backTarget());
 }
 
 function openWhatsApp(phone, text) {
@@ -344,19 +493,6 @@ function summaryMessage(student) {
   const entries = state.lessonsByStudent[student.id] || [];
   const done = hoursCompleted(student.id);
   const lastDate = entries[0] ? formatDate(entries[0].date) : "—";
-  const reviewLink = "https://g.page/r/CaSe5_SXtzHLEBM/review";
-  const isFinished = done >= student.totalHoursPlanned;
-
-  if (isFinished) {
-    return [
-      "Dear " + student.name + ",",
-      "",
-      "Thank you for learning with DRIVING LESSONS. If you enjoyed the training, please share your experience with a Google review. Your feedback helps other learners choose a trusted driving trainer. Thank you for your support.",
-      "",
-      " Leave your review here: " + reviewLink
-    ].join("\n");
-  }
-
   return [
     "Hi " + student.name + ", your driving training progress so far:",
     "",
@@ -375,12 +511,35 @@ function collectedTotal() { return state.students.reduce((n,s)=>n+paymentsTotal(
 function outstandingTotal() { return state.students.reduce((n,s)=>n+balanceFor(s),0); }
 
 function dashboardHtml() {
+  const g = sortedStudents();
   return '<div class="dashboard">' +
     '<div class="stat"><div class="stat-label">STUDENTS</div><div class="stat-value">'+state.students.length+'</div></div>' +
     '<div class="stat"><div class="stat-label">LESSONS</div><div class="stat-value">'+state.students.reduce((n,s)=>n+(state.lessonsByStudent[s.id]||[]).length,0)+'</div></div>' +
-    '<div class="stat"><div class="stat-label">RECEIVED</div><div class="stat-value green">'+money(collectedTotal())+'</div></div>' +
-    '<div class="stat"><div class="stat-label">PENDING</div><div class="stat-value red">'+money(outstandingTotal())+'</div></div>' +
+    '<div class="stat"><div class="stat-label">IN TRAINING</div><div class="stat-value">'+g.active.length+'</div></div>' +
+    '<div class="stat"><div class="stat-label">COMPLETED</div><div class="stat-value green">'+g.finished.length+'</div></div>' +
     '</div>';
+}
+
+function financeHtml() {
+  const rows = state.students.map((s) => ({ s: s, fee: totalCourseFee(s), rec: paymentsTotal(s.id), bal: balanceFor(s) }))
+    .sort((a, b) => b.bal - a.bal);
+  const totalFees = rows.reduce((n, r) => n + r.fee, 0);
+  const thisMonth = monthlyReceived(todayISO().slice(0, 7));
+  const table = rows.length
+    ? '<table class="report-table"><tr><th>Student</th><th>Fee</th><th>Received</th><th>Balance</th></tr>' +
+      rows.map((r) => '<tr class="fin-row" data-open-fin="' + r.s.id + '"><td>' + escapeHtml(r.s.name) + '</td><td>' + money(r.fee) +
+        '</td><td class="green">' + money(r.rec) + '</td><td class="' + (r.bal > 0 ? 'red' : 'green') + '"><b>' + (r.bal > 0 ? money(r.bal) : 'Paid') + '</b></td></tr>').join('') +
+      '</table>'
+    : '<div class="empty"><div class="empty-body">No students yet.</div></div>';
+  return '<div class="dashboard" style="padding:0">' +
+      '<div class="stat"><div class="stat-label">RECEIVED</div><div class="stat-value green">' + money(collectedTotal()) + '</div></div>' +
+      '<div class="stat"><div class="stat-label">PENDING</div><div class="stat-value red">' + money(outstandingTotal()) + '</div></div>' +
+      '<div class="stat"><div class="stat-label">TOTAL COURSE FEES</div><div class="stat-value">' + money(totalFees) + '</div></div>' +
+      '<div class="stat"><div class="stat-label">RECEIVED THIS MONTH</div><div class="stat-value green">' + money(thisMonth) + '</div></div>' +
+    '</div>' +
+    '<div class="quick-row" style="padding:12px 0 0"><button class="quick-btn" id="btn-reports">📊 Monthly reports</button><button class="quick-btn" id="btn-lock-fin">🔒 Hide</button></div>' +
+    '<div class="section-label display">Student balances</div>' + table +
+    '<div class="spacer"></div>';
 }
 
 function paymentListHtml(s) {
@@ -445,23 +604,33 @@ async function exportData() {
             new Date().toISOString().slice(0, 10) +
             ".json";
 
+        // =====================================================
+        // ANDROID APP
+        // =====================================================
         if (
             window.Android &&
             typeof window.Android.saveBackup === "function"
         ) {
             window.Android.saveBackup(fileName, json);
+
             return;
         }
+
+        // =====================================================
+        // NORMAL WEB BROWSER
+        // =====================================================
 
         const blob = new Blob(
             [json],
             { type: "application/json" }
         );
 
+        // Web Share API
         if (
             navigator.share &&
             navigator.canShare
         ) {
+
             const file = new File(
                 [blob],
                 fileName,
@@ -473,21 +642,29 @@ async function exportData() {
                     files: [file]
                 })
             ) {
+
                 await navigator.share({
                     title: "Driving Lessons Backup",
                     text: "Driving Lessons app backup",
                     files: [file]
                 });
+
                 return;
             }
         }
 
+        // Browser fallback
         const url = URL.createObjectURL(blob);
+
         const a = document.createElement("a");
+
         a.href = url;
         a.download = fileName;
+
         document.body.appendChild(a);
+
         a.click();
+
         a.remove();
 
         setTimeout(() => {
@@ -495,15 +672,16 @@ async function exportData() {
         }, 1000);
 
     } catch (error) {
+
         console.error("Backup error:", error);
+
         alert(
             "Backup failed: " +
             (error.message || error)
         );
     }
 }
-
-function importData() {
+  function importData() {
   const input = document.createElement("input");
   input.type = "file";
   input.accept = "application/json,.json,text/json";
@@ -537,97 +715,93 @@ function importData() {
   input.click();
 }
 
-function broadcastAttachment() {
-  if (!state.students.length) return showError("No students available to broadcast.");
-  
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*,application/pdf";
-  input.style.display = "none";
-  
-  input.onchange = async () => {
-    const file = input.files && input.files[0];
-    if (!file) return;
-
-    const msg = prompt("Optional caption / message to send with attachment to ALL students:", "Dear Student, please find the attached document from Driving Lessons.");
-    
-    if (msg === null) return;
-
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({
-          files: [file],
-          title: "Driving Lessons Attachment",
-          text: msg
-        });
-        return;
-      } catch (err) {
-        console.log("Native share cancelled/failed, falling back to sequential WhatsApp sending.");
-      }
-    }
-
-    alert("File selected: " + file.name + "\n\nWhatsApp will now open sequentially for each student. Paste or attach your file directly into each opened chat.");
-    
-    state.students.forEach((s, idx) => {
-      setTimeout(() => {
-        openWhatsApp(s.phone, msg + " (Attached: " + file.name + ")");
-      }, idx * 1500);
-    });
-  };
-
-  document.body.appendChild(input);
-  input.click();
+function progressBarHtml(done, total, completed) {
+  const full = !!completed || (total > 0 && done >= total);
+  const pct = full ? 100 : Math.max(0, Math.min(100, (done / Math.max(total, 0.01)) * 100));
+  return '<div class="progress-track"><div class="progress-fill' + (full ? ' done' : '') + '" style="width:' + pct + '%"></div><div class="progress-dash"></div></div>';
 }
 
-function progressBarHtml(done, total) {
-  const pct = Math.max(0, Math.min(100, (done / Math.max(total, 0.01)) * 100));
-  return '<div class="progress-track"><div class="progress-fill" style="width:' + pct + '%"></div><div class="progress-dash"></div></div>';
-}
-
+const VIEW_TITLES = {
+  list: "DriveLog", addStudent: "New student", editStudent: "Edit student", addLesson: "Log lesson",
+  addPayment: "Add received payment", reports: "Monthly report", addExpense: "Add expense", finance: "Finance",
+};
 function topBarHtml() {
   const v = state.view;
   const s = activeStudent();
-  const title = v.name === "list" ? "DriveLog"
-    : v.name === "addStudent" ? "New student"
-    : v.name === "addLesson" ? "Log lesson"
-    : v.name === "addPayment" ? "Add received payment"
-    : v.name === "reports" ? "Monthly report"
-    : v.name === "addExpense" ? "Add expense"
-    : s ? escapeHtml(s.name) : "DRIVING LESSONS";
+  const title = v.name === "detail" ? (s ? escapeHtml(s.name) : "DriveLog") : (VIEW_TITLES[v.name] || "DriveLog");
   const left = v.name === "list"
-    ? '<div class="badge">' + ICONS.gauge(16, "var(--asphalt)") + '</div>'
-    : '<button class="icon-btn" id="btn-back" aria-label="Back">' + ICONS.back(20, "var(--paper)") + '</button>';
-  return '<div class="topbar">' + left + '<div class="topbar-title display">' + title + '</div><div style="width:32px"></div></div>';
+    ? '<div class="top-side"><div class="badge">' + ICONS.gauge(16, "var(--asphalt)") + '</div></div>'
+    : '<button class="icon-btn" id="btn-back" aria-label="Back">' + ICONS.back(22, "var(--paper)") + '</button>';
+  const right = (v.name === "list" && nativeHas("lockNow"))
+    ? '<button class="icon-btn" id="btn-lock-now" aria-label="Lock app">' + ICONS.lock(20, "var(--road-yellow)") + '</button>'
+    : '<div class="top-side"></div>';
+  return '<div class="topbar">' + left + '<div class="topbar-title display">' + title + '</div>' + right + '</div>';
+}
+
+function tabBarHtml() {
+  const n = state.view.name;
+  if (n !== "list" && n !== "finance") return "";
+  const tab = (id, label, icon) => '<button class="tab-btn' + (n === id ? ' active' : '') + '" data-tab="' + id + '">' + icon + '<span>' + label + '</span></button>';
+  return '<div class="tabbar">' + tab("list", "Students", ICONS.users(20)) + tab("finance", "Finance", ICONS.wallet(20)) + '</div>';
+}
+
+function confirmHtml() {
+  const c = state.confirm;
+  if (!c) return "";
+  const s = state.students.find((x) => x.id === c.id);
+  if (!s) return "";
+  const nl = (state.lessonsByStudent[s.id] || []).length, np = (state.paymentsByStudent[s.id] || []).length;
+  return '<div class="modal-back" id="modal-back"><div class="modal">' +
+    '<div class="display" style="font-size:19px;color:var(--ink)">Delete ' + escapeHtml(s.name) + '?</div>' +
+    '<div class="empty-body" style="text-align:left;margin:8px 0 16px">This permanently removes the student together with ' + nl + ' lesson' + (nl === 1 ? '' : 's') +
+    ' and ' + np + ' payment record' + (np === 1 ? '' : 's') + '. It cannot be undone. Tip: take a Backup first.</div>' +
+    '<div class="form-actions"><button class="secondary-btn" id="btn-confirm-no">Cancel</button><button class="danger-btn" id="btn-confirm-yes">Delete</button></div>' +
+    '</div></div>';
+}
+
+function studentCardHtml(s) {
+  const done = hoursCompleted(s.id);
+  const count = (state.lessonsByStudent[s.id] || []).length;
+  const li = licenseInfo(s.licenseType);
+  const completed = isCompleted(s);
+  const badge = completed ? '<span class="badge-pill badge-done">✓ COMPLETED</span>'
+    : (count === 0 ? '<span class="badge-pill badge-new">NEW</span>' : '');
+  return '<div class="student-card' + (completed ? ' completed' : '') + '" data-open="' + s.id + '">' +
+    '<div class="student-card-main">' +
+      '<div class="student-icon">' + ICONS[li.icon](18, "var(--asphalt)") + '</div>' +
+      '<div style="flex:1;min-width:0;text-align:left">' +
+        '<div class="student-name display">' + escapeHtml(s.name) + badge + '</div>' +
+        '<div class="student-meta">' + count + ' lesson' + (count === 1 ? '' : 's') + ' · ' + done.toFixed(1) + '/' + s.totalHoursPlanned + ' hrs</div>' +
+        progressBarHtml(done, s.totalHoursPlanned, completed) +
+      '</div>' +
+      '<div class="student-actions">' +
+        '<a class="action-btn" href="tel:' + digitsOnly(s.phone) + '" title="Call" onclick="event.stopPropagation()">' + ICONS.phone(16, "var(--asphalt)") + '</a>' +
+        '<button class="action-btn" data-card-wa="' + s.id + '" title="WhatsApp progress">' + ICONS.chat(16, "var(--go-green)") + '</button>' +
+        '<button class="action-btn" data-edit-student="' + s.id + '" title="Edit student">' + ICONS.edit(16, "var(--asphalt)") + '</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card-row">' +
+      '<button class="lesson-quick" data-quick-lesson="' + s.id + '">' + ICONS.plus(14, "var(--asphalt)") + ' Today\'s lesson</button>' +
+      '<button class="welcome-btn" data-welcome-wa="' + s.id + '">' + ICONS.chat(14, "var(--go-green)") + ' Welcome T&amp;C</button>' +
+    '</div>' +
+  '</div>';
 }
 
 function studentListHtml() {
+  const addBtn = '<button class="fab" id="btn-add-student" style="margin-top:14px">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">New student</span></button>';
   if (state.students.length === 0) {
     return '<div class="empty"><div class="empty-title display">No students yet</div>' +
-      '<div class="empty-body">Add your first student to start logging lessons and payments.</div></div>' +
-      '<button class="fab" id="btn-add-student">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">New student</span></button>';
+      '<div class="empty-body">Add your first student to start logging lessons and payments.</div></div>' + addBtn;
   }
-  const cards = state.students.map((s) => {
-    const done = hoursCompleted(s.id);
-    const count = (state.lessonsByStudent[s.id] || []).length;
-    const li = licenseInfo(s.licenseType);
-    const pending = balanceFor(s);
-    return '<div class="student-card" data-open="' + s.id + '">' +
-      '<div class="student-card-main">' +
-        '<div class="student-icon">' + ICONS[li.icon](18, "var(--asphalt)") + '</div>' +
-        '<div style="flex:1;text-align:left">' +
-          '<div class="student-name display">' + escapeHtml(s.name) + '</div>' +
-          '<div class="student-meta">' + count + ' lesson' + (count === 1 ? '' : 's') + ' · ' + done.toFixed(1) + '/' + s.totalHoursPlanned + ' hrs' + (pending > 0 ? ' · <span class="red">Bal: ' + money(pending) + '</span>' : '') + '</div>' +
-          progressBarHtml(done, s.totalHoursPlanned) +
-        '</div>' +
-        '<div class="student-actions">' +
-          '<a class="action-btn" href="tel:' + digitsOnly(s.phone) + '" title="Call Student" onclick="event.stopPropagation()">' + ICONS.phone(16, "var(--asphalt)") + '</a>' +
-          '<button class="action-btn" data-card-wa="' + s.id + '" title="WhatsApp Progress" onclick="event.stopPropagation()">' + ICONS.chat(16, "var(--go-green)") + '</button>' +
-        '</div>' +
-      '</div>' +
-      '<button class="welcome-btn" data-welcome-wa="' + s.id + '" onclick="event.stopPropagation()">' + ICONS.chat(14, "var(--go-green)") + ' Send Welcome T&amp;C</button>' +
-    '</div>';
-  }).join("");
-  return cards + '<button class="fab" id="btn-add-student">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">New student</span></button>';
+  const g = sortedStudents();
+  let html = addBtn;
+  if (g.active.length) {
+    html += '<div class="section-head"><span>Under training / new</span><span class="count">' + g.active.length + '</span></div>' + g.active.map(studentCardHtml).join("");
+  }
+  if (g.finished.length) {
+    html += '<div class="section-head"><span>Completed training</span><span class="count">' + g.finished.length + '</span></div>' + g.finished.map(studentCardHtml).join("");
+  }
+  return html + '<div class="spacer"></div>';
 }
 
 function studentDetailHtml(s) {
@@ -637,6 +811,7 @@ function studentDetailHtml(s) {
   const rec = paymentsTotal(s.id);
   const fee = totalCourseFee(s);
   const bal = balanceFor(s);
+  const completed = isCompleted(s);
 
   let timelineHtml;
   if (lessons.length === 0) {
@@ -665,31 +840,41 @@ function studentDetailHtml(s) {
     timelineHtml = '<div class="timeline">' + timelineHtml + '</div>';
   }
 
+  const moneyHtml = state.financeUnlocked
+    ? '<div class="payment-box">' +
+        '<div class="payment-summary-row">' +
+          '<div><div class="stat-label">COURSE FEE</div><div class="pay-stat-val">' + money(fee) + '</div></div>' +
+          '<div><div class="stat-label">RECEIVED</div><div class="pay-stat-val green">' + money(rec) + '</div></div>' +
+          '<div><div class="stat-label">BALANCE</div><div class="pay-stat-val red">' + money(bal) + '</div></div>' +
+        '</div>' +
+        '<button class="pay-btn" id="btn-add-payment">' + ICONS.wallet(16, "var(--asphalt)") + ' ＋ Add received payment</button>' +
+      '</div>' +
+      '<div class="section-label display">Payment history</div>' + paymentListHtml(s)
+    : '<div class="payment-box locked-box">' + ICONS.lock(22, "var(--muted)") +
+        '<div class="locked-title">Fees &amp; payments are hidden</div>' +
+        '<button class="pay-btn" id="btn-unlock-pay">🔓 Unlock to view</button>' +
+      '</div>';
+
   return (
-    '<button class="back-nav-btn" id="btn-profile-back">' + ICONS.back(18, "var(--ink)") + '<span>Back to Students</span></button>' +
     '<div class="detail-header">' +
+      (completed ? '<div class="complete-chip">' + ICONS.check(13, "var(--go-green)") + ' Training completed</div>' : '') +
       '<div class="detail-meta-row"><span>' + li.label + '</span><span>· Started ' + formatDate(s.startDate) + '</span></div>' +
       '<div class="hours-row"><span class="hours-big display">' + done.toFixed(1) + '</span><span class="hours-small">/ ' + s.totalHoursPlanned + ' hrs</span></div>' +
-      progressBarHtml(done, s.totalHoursPlanned) +
+      progressBarHtml(done, s.totalHoursPlanned, completed) +
       '<button class="summary-btn" id="btn-share-welcome" style="margin-top:14px; background: rgba(245,183,0,0.15); border-color: var(--road-yellow); color: var(--asphalt);">' + ICONS.chat(16, "var(--asphalt)") + '<span style="margin-left:8px">Send Welcome T&amp;C</span></button>' +
-      '<button class="summary-btn" id="btn-share-summary">' + ICONS.chat(16, "var(--go-green)") + '<span style="margin-left:8px">' + (done >= s.totalHoursPlanned ? 'Send Thank You & Review Request' : 'Send progress summary on WhatsApp') + '</span></button>' +
-    '</div>' +
-
-    '<div class="payment-box">' +
-      '<div class="payment-summary-row">' +
-        '<div><div class="stat-label">COURSE FEE</div><div class="pay-stat-val">' + money(fee) + '</div></div>' +
-        '<div><div class="stat-label">RECEIVED</div><div class="pay-stat-val green">' + money(rec) + '</div></div>' +
-        '<div><div class="stat-label">BALANCE</div><div class="pay-stat-val red">' + money(bal) + '</div></div>' +
+      '<button class="summary-btn" id="btn-share-summary">' + ICONS.chat(16, "var(--go-green)") + '<span style="margin-left:8px">Send progress summary on WhatsApp</span></button>' +
+      '<div class="card-row" style="margin-top:10px">' +
+        '<button class="quick-btn edit" id="btn-edit-student">' + ICONS.edit(15, "var(--ink)") + ' Edit</button>' +
+        '<button class="quick-btn edit danger" id="btn-delete-student">' + ICONS.trash(15, "var(--stop-red)") + ' Delete</button>' +
       '</div>' +
-      '<button class="pay-btn" id="btn-add-payment">' + ICONS.wallet(16, "var(--asphalt)") + ' ＋ Add received payment</button>' +
     '</div>' +
 
-    '<div class="section-label display">Payment history</div>' +
-    paymentListHtml(s) +
+    moneyHtml +
 
     '<div class="section-label display">Lesson history</div>' +
     timelineHtml +
-    '<button class="fab" id="btn-add-lesson">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">Log today\'s lesson</span></button>'
+    '<div class="spacer"></div>' +
+    '<div class="bottom-bar"><button class="fab" id="btn-add-lesson">' + ICONS.plus(20, "var(--asphalt)") + '<span style="margin-left:6px">Log today\'s lesson</span></button></div>'
   );
 }
 
@@ -699,12 +884,15 @@ function fieldHtml(label, inner) {
 
 function addStudentFormHtml() {
   const d = state.draft;
-  if (d.name === undefined) d.name = "";
-  if (d.phone === undefined) d.phone = "+91";
-  if (d.licenseType === undefined) d.licenseType = LICENSE_TYPES[1].id;
-  if (d.totalHoursPlanned === undefined) d.totalHoursPlanned = 20;
-  if (d.courseFee === undefined) d.courseFee = 5000;
-  if (d.startDate === undefined) d.startDate = todayISO();
+  const editing = state.view.name === "editStudent";
+  const es = editing ? activeStudent() : null;
+  if (d.name === undefined) d.name = es ? es.name : "";
+  if (d.phone === undefined) d.phone = es ? es.phone : "+91";
+  if (d.licenseType === undefined) d.licenseType = es ? es.licenseType : LICENSE_TYPES[1].id;
+  if (d.totalHoursPlanned === undefined) d.totalHoursPlanned = es ? es.totalHoursPlanned : 20;
+  if (d.courseFee === undefined) d.courseFee = es ? es.courseFee : 5000;
+  if (d.startDate === undefined) d.startDate = es ? es.startDate : todayISO();
+  if (d.manualComplete === undefined) d.manualComplete = es ? es.manualComplete === true : false;
 
   const licensePills = LICENSE_TYPES.map((lt) =>
     '<button type="button" class="select-pill' + (d.licenseType === lt.id ? ' active' : '') + '" data-set-license="' + lt.id + '">' + lt.label + '</button>'
@@ -712,17 +900,28 @@ function addStudentFormHtml() {
 
   const canSave = d.name.trim().length > 0 && digitsOnly(d.phone).length >= 8;
 
+  const statusField = editing
+    ? fieldHtml("Training status",
+        '<div class="pill-row">' +
+          '<button type="button" class="select-pill' + (!d.manualComplete ? ' active' : '') + '" data-set-complete="auto">Auto (by hours)</button>' +
+          '<button type="button" class="select-pill' + (d.manualComplete ? ' active' : '') + '" data-set-complete="yes">Mark as completed</button>' +
+        '</div>')
+    : '';
+
   return (
+    '<button type="button" class="pick-btn" id="btn-pick-contact">' + ICONS.contact(18, "var(--go-green)") + ' Fill from phone contacts</button>' +
     fieldHtml("Student name", '<input class="input" id="f-name" value="' + escapeHtml(d.name) + '" placeholder="e.g. Priya Sharma" />') +
     fieldHtml("WhatsApp number", '<input class="input" id="f-phone" value="' + escapeHtml(d.phone) + '" placeholder="+91 98765 43210" />') +
     fieldHtml("License type", '<div class="pill-row">' + licensePills + '</div>') +
     fieldHtml("Planned course hours", '<input class="input" id="f-hours" type="number" min="1" value="' + d.totalHoursPlanned + '" />') +
     fieldHtml("Total course fee (₹)", '<input class="input" id="f-fee" type="number" min="0" value="' + d.courseFee + '" />') +
     fieldHtml("Start date", '<input class="input" id="f-start" type="date" value="' + d.startDate + '" />') +
+    statusField +
     '<div class="form-actions">' +
       '<button class="secondary-btn" id="btn-cancel-student">Cancel</button>' +
-      '<button class="primary-btn" id="btn-save-student" ' + (canSave ? "" : "disabled") + '>Save student</button>' +
-    '</div>'
+      '<button class="primary-btn" id="btn-save-student" ' + (canSave ? "" : "disabled") + '>' + (editing ? 'Save changes' : 'Save student') + '</button>' +
+    '</div>' +
+    (editing ? '<button type="button" class="danger-btn" id="btn-delete-student" style="width:100%;flex:none">Delete this student</button>' : '')
   );
 }
 
@@ -803,16 +1002,13 @@ function render() {
 
   if (v.name === "list") {
     bodyHtml = dashboardHtml() +
-      '<div class="quick-row">' +
-        '<button class="quick-btn" id="btn-reports">📊 Reports</button>' +
-        '<button class="quick-btn" id="btn-broadcast">📢 Broadcast File</button>' +
-        '<button class="quick-btn" id="btn-export">⬇ Backup</button>' +
-        '<button class="quick-btn" id="btn-import">⬆ Restore</button>' +
-      '</div>' +
+      '<div class="quick-row" style="padding:12px 0 0"><button class="quick-btn" id="btn-export">⬇ Backup</button><button class="quick-btn" id="btn-import">⬆ Restore</button></div>' +
       studentListHtml();
-  } else if (v.name === "addStudent") {
+  } else if (v.name === "finance") {
+    bodyHtml = financeHtml();
+  } else if (v.name === "addStudent" || v.name === "editStudent") {
     wrapClass = "form-wrap";
-    bodyHtml = addStudentFormHtml();
+    bodyHtml = (v.name === "editStudent" && !activeStudent()) ? "" : addStudentFormHtml();
   } else if (v.name === "detail") {
     const s = activeStudent();
     bodyHtml = s ? studentDetailHtml(s) : "";
@@ -831,11 +1027,18 @@ function render() {
     bodyHtml = expenseFormHtml();
   }
 
+  const bt = backTarget();
+  if (bt) {
+    bodyHtml = '<button class="back-nav-btn" id="btn-body-back">' + ICONS.back(18, "var(--ink)") + '<span>' + backLabel(bt) + '</span></button>' + bodyHtml;
+  }
+
   root.innerHTML =
     '<div class="phone">' +
       topBarHtml() +
       '<div class="body"><div class="' + wrapClass + '">' + bodyHtml + '</div></div>' +
       (state.error ? '<div class="toast" id="toast">' + escapeHtml(state.error) + '</div>' : '') +
+      tabBarHtml() +
+      confirmHtml() +
     '</div>';
 
   bindEvents();
@@ -845,16 +1048,62 @@ function bindEvents() {
   const root = document.getElementById("root");
 
   const back = root.querySelector("#btn-back");
-  if (back) back.onclick = () => goto(state.view.name === "addPayment" ? { name: "detail", studentId: activeStudent().id } : { name: "list" });
+  if (back) back.onclick = goBack;
+  const bodyBack = root.querySelector("#btn-body-back");
+  if (bodyBack) bodyBack.onclick = goBack;
 
-  const profileBackBtn = root.querySelector("#btn-profile-back");
-  if (profileBackBtn) profileBackBtn.onclick = () => goto({ name: "list" });
+  const lockNow = root.querySelector("#btn-lock-now");
+  if (lockNow) lockNow.onclick = () => window.Android.lockNow();
+
+  root.querySelectorAll("[data-tab]").forEach((el) => {
+    el.onclick = () => {
+      const tab = el.getAttribute("data-tab");
+      if (tab === state.view.name) return;
+      if (tab === "finance") requireAuth(() => goto({ name: "finance" }));
+      else goto({ name: "list" });
+    };
+  });
+  const lockFin = root.querySelector("#btn-lock-fin");
+  if (lockFin) lockFin.onclick = () => goto({ name: "list" });
+  root.querySelectorAll("[data-open-fin]").forEach((el) => {
+    el.onclick = () => goto({ name: "detail", studentId: el.getAttribute("data-open-fin"), from: "finance" });
+  });
+  const unlockPay = root.querySelector("#btn-unlock-pay");
+  if (unlockPay) unlockPay.onclick = () => requireAuth(() => render());
+
+  /* edit / delete student */
+  root.querySelectorAll("[data-edit-student]").forEach((el) => {
+    el.onclick = (e) => { e.stopPropagation(); goto({ name: "editStudent", studentId: el.getAttribute("data-edit-student") }); };
+  });
+  root.querySelectorAll("[data-quick-lesson]").forEach((el) => {
+    el.onclick = (e) => { e.stopPropagation(); goto({ name: "addLesson", studentId: el.getAttribute("data-quick-lesson"), origin: "list" }); };
+  });
+  const editBtn = root.querySelector("#btn-edit-student");
+  if (editBtn) editBtn.onclick = () => goto({ name: "editStudent", studentId: activeStudent().id, from: state.view.from });
+  const delBtn = root.querySelector("#btn-delete-student");
+  if (delBtn) delBtn.onclick = () => { state.confirm = { kind: "deleteStudent", id: activeStudent().id }; render(); };
+  const confNo = root.querySelector("#btn-confirm-no");
+  if (confNo) confNo.onclick = () => { state.confirm = null; render(); };
+  const confBack = root.querySelector("#modal-back");
+  if (confBack) confBack.onclick = (e) => { if (e.target === confBack) { state.confirm = null; render(); } };
+  const confYes = root.querySelector("#btn-confirm-yes");
+  if (confYes) confYes.onclick = () => { const id = state.confirm && state.confirm.id; state.confirm = null; if (id) deleteStudent(id); };
+
+  const pickBtn = root.querySelector("#btn-pick-contact");
+  if (pickBtn) pickBtn.onclick = () => {
+    if (nativeHas("pickContact")) window.Android.pickContact();
+    else showError("Picking from contacts works inside the Android app.");
+  };
 
   const addStudentBtn = root.querySelector("#btn-add-student");
   if (addStudentBtn) addStudentBtn.onclick = () => goto({ name: "addStudent" });
 
   root.querySelectorAll("[data-open]").forEach((el) => {
     el.onclick = () => goto({ name: "detail", studentId: el.getAttribute("data-open") });
+  });
+
+  root.querySelectorAll(".card-row button, .student-actions .action-btn").forEach((el) => {
+    el.addEventListener("click", (e) => e.stopPropagation());
   });
 
   root.querySelectorAll("[data-card-wa]").forEach((el) => {
@@ -879,8 +1128,6 @@ function bindEvents() {
   if (exportBtn) exportBtn.onclick = exportData;
   const importBtn = root.querySelector("#btn-import");
   if (importBtn) importBtn.onclick = importData;
-  const broadcastBtn = root.querySelector("#btn-broadcast");
-  if (broadcastBtn) broadcastBtn.onclick = broadcastAttachment;
   const reportsBtn = root.querySelector("#btn-reports");
   if (reportsBtn) reportsBtn.onclick = () => goto({name:"reports"});
   const reportMonth = root.querySelector("#report-month");
@@ -889,10 +1136,10 @@ function bindEvents() {
   if (addExpenseBtn) addExpenseBtn.onclick = () => goto({name:"addExpense"});
 
   const addPaymentBtn = root.querySelector("#btn-add-payment");
-  if (addPaymentBtn) addPaymentBtn.onclick = () => goto({ name: "addPayment", studentId: activeStudent().id });
+  if (addPaymentBtn) addPaymentBtn.onclick = () => goto({ name: "addPayment", studentId: activeStudent().id, from: state.view.from });
 
   const addLessonBtn = root.querySelector("#btn-add-lesson");
-  if (addLessonBtn) addLessonBtn.onclick = () => goto({ name: "addLesson", studentId: activeStudent().id });
+  if (addLessonBtn) addLessonBtn.onclick = () => goto({ name: "addLesson", studentId: activeStudent().id, from: state.view.from });
 
   const shareWelcomeBtn = root.querySelector("#btn-share-welcome");
   if (shareWelcomeBtn) shareWelcomeBtn.onclick = () => {
@@ -929,14 +1176,25 @@ function bindEvents() {
     root.querySelector("#f-hours").oninput = (e) => { state.draft.totalHoursPlanned = Number(e.target.value) || 0; };
     root.querySelector("#f-fee").oninput = (e) => { state.draft.courseFee = Number(e.target.value) || 0; };
     root.querySelector("#f-start").oninput = (e) => { state.draft.startDate = e.target.value; };
-    root.querySelector("#btn-cancel-student").onclick = () => goto({ name: "list" });
+    root.querySelectorAll("[data-set-complete]").forEach((el) => {
+      el.onclick = () => { state.draft.manualComplete = el.getAttribute("data-set-complete") === "yes"; render(); };
+    });
+    root.querySelector("#btn-cancel-student").onclick = goBack;
     root.querySelector("#btn-save-student").onclick = () => {
       const d = state.draft;
       if (!(d.name.trim().length > 0 && digitsOnly(d.phone).length >= 8)) return;
-      addStudent({
-        id: uid(), name: d.name.trim(), phone: d.phone.trim(),
+      const fields = {
+        name: d.name.trim(), phone: d.phone.trim(),
         licenseType: d.licenseType, totalHoursPlanned: d.totalHoursPlanned, courseFee: d.courseFee, startDate: d.startDate,
-      });
+      };
+      if (state.view.name === "editStudent") {
+        fields.manualComplete = d.manualComplete === true;
+        updateStudent(state.view.studentId, fields);
+      } else {
+        fields.id = uid();
+        fields.createdAt = Date.now();
+        addStudent(fields);
+      }
     };
   }
 
@@ -958,7 +1216,7 @@ function bindEvents() {
     root.querySelectorAll("[data-set-rating]").forEach((el) => {
       el.onclick = () => { state.draft.rating = el.getAttribute("data-set-rating"); render(); };
     });
-    root.querySelector("#btn-cancel-lesson").onclick = () => goto({ name: "detail", studentId: activeStudent().id });
+    root.querySelector("#btn-cancel-lesson").onclick = goBack;
     root.querySelector("#btn-save-lesson").onclick = () => {
       const d = state.draft;
       const s = activeStudent();
@@ -976,7 +1234,7 @@ function bindEvents() {
     root.querySelector("#p-date").oninput = e => { state.draft.date=e.target.value; };
     root.querySelector("#p-note").oninput = e => { state.draft.note=e.target.value; };
     root.querySelectorAll("[data-pay-method]").forEach(el => el.onclick=()=>{state.draft.method=el.getAttribute("data-pay-method");render();});
-    root.querySelector("#btn-cancel-payment").onclick=()=>goto({ name: "detail", studentId: activeStudent().id });
+    root.querySelector("#btn-cancel-payment").onclick=goBack;
     root.querySelector("#btn-save-payment").onclick=()=>{
       const d=state.draft,s=activeStudent();
       if(!(Number(d.amount)>0)) return showError("Enter a valid payment amount.");
@@ -991,7 +1249,7 @@ function bindEvents() {
     root.querySelector("#e-date").oninput=e=>{state.draft.date=e.target.value;};
     root.querySelector("#e-note").oninput=e=>{state.draft.note=e.target.value;};
     root.querySelectorAll("[data-exp-category]").forEach(el=>el.onclick=()=>{state.draft.category=el.getAttribute("data-exp-category");render();});
-    root.querySelector("#btn-cancel-expense").onclick=()=>goto({name:"reports"});
+    root.querySelector("#btn-cancel-expense").onclick=goBack;
     root.querySelector("#btn-save-expense").onclick=()=>{const d=state.draft;if(!(Number(d.amount)>0))return showError("Enter a valid expense amount.");addExpense({id:uid(),amount:Number(d.amount),date:d.date,category:d.category,note:(d.note||"").trim()});};
   }
 }
@@ -1013,11 +1271,13 @@ render();
 if ("serviceWorker" in navigator && (location.protocol === "https:" || location.hostname === "localhost")) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("service-worker.js").then((reg) => {
+      // Periodically check for updates
       reg.addEventListener("updatefound", () => {
         const installingWorker = reg.installing;
         if (installingWorker) {
           installingWorker.onstatechange = () => {
             if (installingWorker.state === "installed" && navigator.serviceWorker.controller) {
+              // Automatically reload to apply update without uninstalling
               window.location.reload();
             }
           };
