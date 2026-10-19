@@ -1096,7 +1096,12 @@ function bindEvents() {
   };
 
   const addStudentBtn = root.querySelector("#btn-add-student");
-  if (addStudentBtn) addStudentBtn.onclick = () => goto({ name: "addStudent" });
+  if (addStudentBtn) addStudentBtn.onclick = () => {
+    goto({ name: "addStudent" });
+    // Inside the Android app, go straight to the phone's contact list.
+    // (If you cancel there, the empty form is ready for manual entry.)
+    if (nativeHas("pickContact")) setTimeout(() => window.Android.pickContact(), 150);
+  };
 
   root.querySelectorAll("[data-open]").forEach((el) => {
     el.onclick = () => goto({ name: "detail", studentId: el.getAttribute("data-open") });
