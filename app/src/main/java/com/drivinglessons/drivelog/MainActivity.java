@@ -35,7 +35,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * DriveLog v1.4
+ * DriveLog v1.5 (contact picker aimed at the contacts app, HyperOS fix)
  *
  *  - App lock: phone fingerprint / PIN / pattern / password on open and after 30 s away
  *  - Finance tab unlock (same phone lock) via Android.authenticate()
@@ -288,12 +288,7 @@ public class MainActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Intent i = new Intent(Intent.ACTION_PICK,
-                            ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
-                    if (!startSub(i, PICK_CONTACT_RESULTCODE)) {
-                        Toast.makeText(MainActivity.this,
-                                "No contacts app found", Toast.LENGTH_SHORT).show();
-                    }
+                    launchContactPicker();
                 }
             });
         }
@@ -330,6 +325,44 @@ public class MainActivity extends Activity {
                     autoPromptAllowed = false;   // show the overlay; user taps Unlock
                 }
             });
+        }
+    }
+
+    /**
+     * Opens the phone's CONTACTS list (never the file manager).
+     * Some HyperOS / MIUI phones send the plain ACTION_PICK intent to the file
+     * manager, so we aim at the contacts app by package name first.
+     */
+    private void launchContactPicker() {
+
+        String[] contactApps = {
+                "com.android.contacts",                 // Xiaomi / HyperOS / AOSP
+                "com.google.android.contacts",          // Google Contacts
+                "com.samsung.android.app.contacts"      // Samsung
+        };
+
+        // 1) Ask a known contacts app directly
+        for (String pkg : contactApps) {
+            Intent i = new Intent(Intent.ACTION_PICK);
+            i.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+            i.setPackage(pkg);
+            if (startSub(i, PICK_CONTACT_RESULTCODE)) {
+                return;
+            }
+        }
+
+        // 2) Any app that handles "pick a phone number" by type only
+        Intent byType = new Intent(Intent.ACTION_PICK);
+        byType.setType(ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE);
+        if (startSub(byType, PICK_CONTACT_RESULTCODE)) {
+            return;
+        }
+
+        // 3) Original method as the last fallback
+        Intent legacy = new Intent(Intent.ACTION_PICK,
+                ContactsContract.CommonDataKinds.Phone.CONTENT_URI);
+        if (!startSub(legacy, PICK_CONTACT_RESULTCODE)) {
+            Toast.makeText(this, "No contacts app found", Toast.LENGTH_SHORT).show();
         }
     }
 
