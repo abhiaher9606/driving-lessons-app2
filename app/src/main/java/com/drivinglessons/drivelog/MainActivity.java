@@ -35,7 +35,7 @@ import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
 /**
- * DriveLog v1.5 (contact picker aimed at the contacts app, HyperOS fix)
+ * Student Training Log v1.6 (formerly DriveLog)
  *
  *  - App lock: phone fingerprint / PIN / pattern / password on open and after 30 s away
  *  - Finance tab unlock (same phone lock) via Android.authenticate()
@@ -67,7 +67,7 @@ public class MainActivity extends Activity {
 
     // Stores backup JSON temporarily while Android's Save dialog is open
     private String pendingBackupJson = null;
-    private String pendingBackupFileName = "driving_lessons_backup.json";
+    private String pendingBackupFileName = "StudentTrainingLog_backup.json";
 
     // ---- lock state ----
     private boolean locked = true;            // the app always starts locked
@@ -263,7 +263,7 @@ public class MainActivity extends Activity {
 
                         pendingBackupJson = jsonData;
                         pendingBackupFileName = (fileName == null || fileName.trim().isEmpty())
-                                ? "driving_lessons_backup.json" : fileName;
+                                ? "StudentTrainingLog_backup.json" : fileName;
 
                         Intent intent = new Intent(Intent.ACTION_CREATE_DOCUMENT);
                         intent.addCategory(Intent.CATEGORY_OPENABLE);
@@ -299,7 +299,7 @@ public class MainActivity extends Activity {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    Intent i = credentialIntent("DriveLog – Finance",
+                    Intent i = credentialIntent("Student Training Log – Finance",
                             "Confirm it's you to view payments");
                     if (i == null) {
                         Toast.makeText(MainActivity.this,
@@ -391,7 +391,7 @@ public class MainActivity extends Activity {
         l.setPadding(48, 48, 48, 48);
 
         TextView title = new TextView(this);
-        title.setText("DriveLog");
+        title.setText("Student Training Log");
         title.setTextColor(ROAD_YELLOW);
         title.setTextSize(32);
         title.setTypeface(Typeface.DEFAULT_BOLD);
@@ -429,11 +429,11 @@ public class MainActivity extends Activity {
     }
 
     private void promptUnlock() {
-        Intent i = credentialIntent("DriveLog", "Unlock to open your students and payments");
+        Intent i = credentialIntent("Student Training Log", "Unlock to open your students and payments");
         if (i == null) {
             // Phone has no screen lock set up – nothing to check against.
             Toast.makeText(this,
-                    "Tip: set a screen lock (PIN / fingerprint) in phone Settings to protect DriveLog.",
+                    "Tip: set a screen lock (PIN / fingerprint) in phone Settings to protect Student Training Log.",
                     Toast.LENGTH_LONG).show();
             unlockApp();
             return;
